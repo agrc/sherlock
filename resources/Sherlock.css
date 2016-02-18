@@ -1,0 +1,59 @@
+.dropdown-menu form .sherlock {
+  position: relative;
+}
+.sherlock {
+  height: 44px;
+  padding: 5px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 200px;
+  z-index: 25;
+}
+.sherlock .input-group-addon {
+  width: 39px;
+}
+.sherlock .text-box {
+  box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+}
+.sherlock .input-group,
+.sherlock .matches-table {
+  width: 190px;
+}
+.sherlock [data-dojo-attach-point='matchesList'] {
+  display: block;
+  width: 100%;
+}
+.sherlock .matches-table {
+  background-color: #fff;
+  display: none;
+  float: left;
+  font-size: 12px;
+  position: absolute;
+  top: 40px;
+  z-index: 99;
+}
+.sherlock .matches-table li.match:hover,
+.sherlock .matches-table .highlighted-row {
+  background-color: #428bca;
+  color: #fff;
+  cursor: pointer;
+}
+.sherlock .matches-table li {
+  padding: 2px 12px;
+}
+.sherlock span.glyphicon-search {
+  top: 0;
+}
+.sherlock li.dropdown-header {
+  display: none;
+}
+.sherlock .first-cell {
+  float: left;
+}
+.sherlock .cnty-cell {
+  float: right;
+}
+.sherlock [data-dojo-attach-point='spinnerDiv'] {
+  padding-left: 7px;
+}

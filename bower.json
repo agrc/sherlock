@@ -1,0 +1,48 @@
+{
+  "name": "sherlock",
+  "version": "0.0.0",
+  "authors": [
+    "steveoh <sgourley@utah.gov>",
+    "stdavis <stdavis@utah.gov>"
+  ],
+  "description": "Search for map features",
+  "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/agrc-widgets/sherlock.git"
+  },
+  "moduleType": [
+    "amd"
+  ],
+  "keywords": [
+    "esri",
+    "js",
+    "arcgis",
+    "map",
+    "gis"
+  ],
+  "license": "MIT",
+  "ignore": [
+    ".grunt",
+    "bower_components",
+    "node_modules",
+    "tests",
+    ".gitattributes",
+    ".gitignore",
+    ".eslintrc",
+    "GruntFile.js"
+  ],
+  "dependencies": {
+    "esri": "arcgis-js-api#~3.15.0",
+    "jasmine-favicon-reporter": "*",
+    "agrc-jasmine-matchers": "~0.1.0",
+    "jasmine-jsreporter": "~0.1.2",
+    "bootstrap": "~3.3.5",
+    "agrc": "agrc-widgets#~4.0.0",
+    "spinjs": "spin.js#~2.3.2"
+  },
+  "resolutions": {
+    "dojo": "v1.10.4/esri-3.14.0",
+    "spinjs": "~2.3.2"
+  }
+}

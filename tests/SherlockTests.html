@@ -9,7 +9,7 @@
     <!-- CSS -->
     <link rel="stylesheet" type="text/css" href="../bower_components/esri/css/esri.css" />
     <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css">
-    <link rel="stylesheet" href="../resources/Sherlock.css">
+    <link rel="stylesheet" href="../src/resources/Sherlock.css">
     <style type='text/css'>
     #map-div {
         height: 400px;
@@ -32,7 +32,7 @@
     <!-- JAVASCRIPT -->
     <script type="text/javascript" src="../bower_components/jquery/dist/jquery.min.js"></script>
     <script type='text/javascript' src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script type='text/javascript' src='dojoConfig.js'></script>
+    <script type='text/javascript' src='../dojoConfig.js'></script>
     <script type='text/javascript' src="../bower_components/dojo/dojo.js"></script>
     <script type="text/javascript">
         var widgetUnderTest;
@@ -44,50 +44,60 @@
                 }
             }
         }, [
-        'sherlock',
+        'sherlock/Sherlock',
+        'sherlock/providers/WebAPI',
+        'sherlock/providers/MapService',
         'agrc/widgets/map/BaseMap',
 
         'dojo/domReady!'
         ],
-        function(Module, mapDependency) {
+        function(
+            Sherlock,
+            WebAPI,
+            MapService,
+
+            mapDependency
+        ) {
             map = new mapDependency('map-div');
 
-            widgetUnderTest = new Module({
-                searchLayer: 'SGID10.Boundaries.Counties',
-                apiKey: 'AGRC-ApiExplorer',
-                searchField: 'NAME',
+            var countiesProvider = new WebAPI(
+                'AGRC-ApiExplorer',
+                'SGID10.Boundaries.Counties',
+                'NAME'
+            );
+            widgetUnderTest = new Sherlock({
+                provider: countiesProvider,
                 map: map,
                 maxResultsToDisplay: 10,
                 placeHolder: 'placeholder txt'
             }, 'search-div');
             widgetUnderTest.startup();
 
-            var w2 = new Module({
-                searchLayer: 'SGID10.Boundaries.Counties',
-                apiKey: 'AGRC-ApiExplorer',
-                searchField: 'NAME',
+            var w2 = new Sherlock({
+                provider: countiesProvider,
                 map: map,
                 maxResultsToDisplay: 10
             }, 'search-div2');
             w2.startup();
 
-            var w3 = new Module({
-                searchLayer: 'SGID10.Transportation.Roads',
-                apiKey: 'AGRC-ApiExplorer',
-                searchField: 'FULLNAME',
+            var mapServiceProvider = new MapService(
+                'http://mapserv.utah.gov/arcgis/rest/services/SGID/LandOwnership/MapServer/0',
+                'AGENCY',
+                {
+                    contextField: 'OWNER'
+                }
+            );
+            var w3 = new Sherlock({
+                provider: mapServiceProvider,
                 map: map,
-                maxResultsToDisplay: 10,
-                contextField: 'ZIPLEFT'
+                maxResultsToDisplay: 10
             }, 'search-div3');
             w3.startup();
 
-            var w4 = new Module({
-                searchLayer: 'SGID10.Transportation.Roads',
-                apiKey: 'AGRC-ApiExplorer',
-                searchField: 'FULLNAME',
+            var w4 = new Sherlock({
+                provider: mapServiceProvider,
                 map: map,
-                maxResultsToDisplay: 10,
-                contextField: 'ZIPLEFT'
+                maxResultsToDisplay: 10
             }, 'search-div-dropdown');
             w4.startup();
         });

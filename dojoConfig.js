@@ -10,7 +10,7 @@ window.dojoConfig = {
         'spinjs',
         {
             name: 'sherlock',
-            location: '../../'
+            location: '../src'
         }, {
             name: 'stubmodule',
             main: 'stub-module'
@@ -19,10 +19,10 @@ window.dojoConfig = {
     has: {'dojo-undef-api': true}
 };
 
-// for jasmine-favicon-reporter
 try {
+    // for jasmine-favicon-reporter
     jasmine.getEnv().addReporter(new JasmineFaviconReporter());
     jasmine.getEnv().addReporter(new jasmineRequire.JSReporter2());
-} catch (e) {
+} catch (er) {
     // do nothing
 }

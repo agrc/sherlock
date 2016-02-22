@@ -24,8 +24,6 @@ define([
     'esri/symbols/SimpleFillSymbol',
     'esri/symbols/SimpleLineSymbol',
     'esri/symbols/SimpleMarkerSymbol',
-    'esri/tasks/query',
-    'esri/tasks/QueryTask',
 
     'spinjs/spin',
 
@@ -56,8 +54,6 @@ define([
     SimpleFillSymbol,
     SimpleLineSymbol,
     SimpleMarkerSymbol,
-    Query,
-    QueryTask,
 
     Spinner
 ) {
@@ -96,27 +92,18 @@ define([
         //      esri.Map reference.
         map: null,
 
-        // apiKey: String
-        apiKey: '',
+        // provider: Object
+        //      An object that provides searching functionality.
+        //      Found in sherlock/providers
+        provider: null,
 
         // promptMessage: String
         //      The label that shows up in the promptMessage for the text box.
         promptMessage: '',
 
-        // mapServiceURL: String
-        //      The URL to the map service that you want to search.
-        mapServiceURL: '',
-
-        // searchField: String
-        //      The field name that is to be searched.
-        searchField: '',
-
         // zoomLevel: Integer
         //      The number of cache levels up from the bottom that you want to zoom to.
         zoomLevel: 5,
-
-        // searchLayer: String
-        searchLayer: 'SGID10.LOCATION.PlaceNamesGNIS2010',
 
         // maxResultsToDisplay: Integer
         //      The maximum number of results that will be displayed.
@@ -126,16 +113,6 @@ define([
         // placeHolder: String
         //     The placeholder text in the text box
         placeHolder: 'Map Search...',
-
-        // outFields: String[]
-        //      The outFields parameter in the esri.tasks.Query.
-        //      If set to null, then only the searchField will be added.
-        outFields: null,
-
-        // contextField: String
-        //      A second field to display in the results table to
-        //      give context to the results in case of duplicate results.
-        contextField: null,
 
         // symbolFill: esri.symbol (optional)
         //      esri.symbol zoom graphic symbol for polygons.
@@ -165,14 +142,11 @@ define([
             //      Overrides method of same name in dijit._Widget.
             // tags:
             //      private
-            console.log('agrc.widgets.locate.Sherlock::postCreate', arguments);
+            console.log('sherlock.Sherlock:postCreate', arguments);
 
-            this._setUpQueryTask();
             this._wireEvents();
             this._setUpGraphicsLayer();
-            this.webApi = new WebApi({
-                apiKey: this.apiKey
-            });
+
             var opts = {
                 lines: 9, // The number of lines to draw
                 length: 4, // The length of each line
@@ -196,7 +170,7 @@ define([
         showSpinner: function () {
             // summary:
             //      sets up and shows the spinner
-            console.log('agrc.widgets.locate.Sherlock::showSpinner', arguments);
+            console.log('sherlock.Sherlock:showSpinner', arguments);
 
             domStyle.set(this.searchIconSpan, 'display', 'none');
 
@@ -208,36 +182,18 @@ define([
         hideSpinner: function () {
             // summary:
             //      hides the spinner and shows the search icon again
-            console.log('agrc.widgets.locate.Sherlock::hideSpinner', arguments);
+            console.log('sherlock.Sherlock:hideSpinner', arguments);
 
             clearTimeout(this._spinTimer);
             this.spinner.stop();
             domStyle.set(this.searchIconSpan, 'display', 'inline');
-        },
-        _setUpQueryTask: function () {
-            // summary:
-            //      Sets up the esri QueryTask.
-            // tags:
-            //      private
-            console.log('agrc.widgets.locate.Sherlock::_setUpQueryTask', arguments);
-
-            var outFields;
-            if (this.outFields) {
-                outFields = this.outFields;
-            } else if (this.contextField) {
-                outFields = [this.searchField, this.contextField];
-            } else {
-                outFields = [this.searchField];
-            }
-            this.outFields = outFields;
-
         },
         _setUpGraphicsLayer: function () {
             // summary:
             //      Sets up the graphics layer and associated symbols.
             // tags:
             //      private
-            console.log('agrc.widgets.locate.Sherlock::_setUpGraphicsLayer', arguments);
+            console.log('sherlock.Sherlock:_setUpGraphicsLayer', arguments);
 
             var afterMapLoaded = lang.hitch(this,
                 function () {
@@ -295,7 +251,7 @@ define([
             //      Wires events.
             // tags:
             //      private
-            console.log('agrc.widgets.locate.Sherlock::_wireEvents', arguments);
+            console.log('sherlock.Sherlock:_wireEvents', arguments);
 
             this.own(
                 on(this.textBox, 'keyup', lang.hitch(this, this._onTextBoxKeyUp)),
@@ -335,7 +291,7 @@ define([
             //      Handles the text box onKeyUp evt.
             // tags:
             //      private
-            console.log('agrc.widgets.locate.Sherlock::_onTextBoxKeyUp', arguments);
+            console.log('sherlock.Sherlock:_onTextBoxKeyUp', arguments);
 
             if (evt.keyCode === keys.ENTER) {
                 // zoom if there is at least one match
@@ -360,7 +316,7 @@ define([
             // tags:
             //      private
             // set timer so that it doesn't fire repeatedly during typing
-            console.log('agrc.widgets.locate.Sherlock::_startSearchTimer', arguments);
+            console.log('sherlock.Sherlock:_startSearchTimer', arguments);
 
             clearTimeout(this._timer);
             this._timer = setTimeout(lang.hitch(this, function () {
@@ -375,7 +331,7 @@ define([
             //      The number of rows to move. Positive moves down, negative moves up.
             // tags:
             //      private
-            console.log('agrc.widgets.locate.Sherlock::_moveSelection', arguments);
+            console.log('sherlock.Sherlock:_moveSelection', arguments);
 
             // exit if there are no matches in table
             if (this.matchesList.children.length < 2) {
@@ -401,12 +357,12 @@ define([
         },
         _search: function (searchString) {
             // summary:
-            //      Performs a search with the QueryTask using the passed in string.
+            //      Initiates a search on the provider
             // searchString: String
             //      The string that is used to construct the LIKE query.
             // tags:
             //      private
-            console.log('agrc.widgets.locate.Sherlock::_search', arguments);
+            console.log('sherlock.Sherlock:_search', arguments);
 
             // return if not enough characters
             if (searchString.length < 1) {
@@ -417,27 +373,20 @@ define([
             // delay spinner a bit
             this._spinTimer = setTimeout(lang.hitch(this, this.showSpinner), 250);
 
-            // execute query / canceling any previous query
-            if (this._deferred) {
-                this._deferred.cancel();
-            }
+            this.provider.cancelPendingRequests();
 
-            this._deferred = this.webApi.search(this.searchLayer, this.outFields, {
-                predicate: 'UPPER(' + this.searchField + ') LIKE UPPER(\'' + searchString + '%\')',
-                spatialReference: this.wkid
-            }).then(lang.hitch(this, function (response) {
+            this.provider.search(searchString).then(lang.hitch(this, function (results) {
                 // clear table
                 this._deleteAllTableRows(this.matchesTable);
 
-                this._processResults(response);
+                this._processResults(results);
             }), lang.hitch(this, function (err) {
-                this._onQueryTaskError(err);
                 // clear table
                 this._deleteAllTableRows(this.matchesTable);
 
                 // swallow errors from cancels
                 if (err.message !== 'undefined') {
-                    throw new Error('agrc.widgets.locate.Sherlock ArcGISServerError: ' + err.message);
+                    throw new Error('sherlock.Sherlock Provider Error: ' + err.message);
                 }
 
                 this.hideSpinner();
@@ -445,12 +394,11 @@ define([
         },
         _processResults: function (features) {
             // summary:
-            //      Processes the features returned from the query task.
+            //      Processes the features returned from the search provider
             // features: Object[]
-            //      The features returned from the query task.
             // tags:
             //      private
-            console.log('agrc.widgets.locate.Sherlock::_processResults', arguments);
+            console.log('sherlock.Sherlock:_processResults', arguments);
 
             try {
                 console.info(features.length + ' search features found.');
@@ -474,7 +422,7 @@ define([
                     this._populateTable(features);
                 }
             } catch (e) {
-                throw new Error('agrc.widgets.locate.Sherlock_processResults: ' + e.message);
+                throw new Error('sherlock.Sherlock_processResults: ' + e.message);
             }
 
             this.hideSpinner();
@@ -488,14 +436,16 @@ define([
             //      The array after it has been processed.
             // tags:
             //      private
-            console.log('agrc.widgets.locate.Sherlock::_removeDuplicateResults', arguments);
+            console.log('sherlock.Sherlock:_removeDuplicateResults', arguments);
 
             var list = [];
             array.forEach(features, function (f) {
                 if (array.some(list, function (existingF) {
-                    if (existingF.attributes[this.searchField] === f.attributes[this.searchField]) {
-                        if (this.contextField) {
-                            if (existingF.attributes[this.contextField] === f.attributes[this.contextField]) {
+                    if (existingF.attributes[this.provider.searchField]
+                        === f.attributes[this.provider.searchField]) {
+                        if (this.provider.contextField) {
+                            if (existingF.attributes[this.provider.contextField]
+                                === f.attributes[this.provider.contextField]) {
                                 return true;
                             }
                         } else {
@@ -517,7 +467,7 @@ define([
             //      The array of features to populate the table with.
             // tags:
             //      private
-            console.log('agrc.widgets.locate.Sherlock::_populateTable', arguments);
+            console.log('sherlock.Sherlock:_populateTable', arguments);
 
             // loop through all features
             array.forEach(features, function (feat) {
@@ -526,10 +476,11 @@ define([
                     'class': 'match'
                 }, this.msg, 'before');
 
-                // get match value string and bold the matching letters
-                var fString = feat.attributes[this.searchField];
+                // get match value string and
+                // bold the matching letters
+                var fString = feat.attributes[this.provider.searchField];
                 var sliceIndex = this.textBox.value.length;
-                if (!this.contextField) {
+                if (!this.provider.contextField) {
                     row.innerHTML = fString.slice(0, sliceIndex) + fString.slice(sliceIndex).bold();
                 } else {
                     // add context field values
@@ -540,7 +491,7 @@ define([
                     var cntyDiv = domConstruct.create('div', {
                         'class': 'cnty-cell'
                     }, row);
-                    cntyDiv.innerHTML = feat.attributes[this.contextField] || '';
+                    cntyDiv.innerHTML = feat.attributes[this.provider.contextField] || '';
                     domConstruct.create('div', {
                         style: 'clear: both;'
                     }, row);
@@ -564,7 +515,7 @@ define([
             //      The event object.
             // tags:
             //      private
-            console.log('agrc.widgets.locate.Sherlock::_onRowClick', arguments);
+            console.log('sherlock.Sherlock:_onRowClick', arguments);
 
             this._setMatch(event.currentTarget);
         },
@@ -576,7 +527,7 @@ define([
             //      The row object that you want to set the textbox to.
             // tags:
             //      private
-            console.log('agrc.widgets.locate.Sherlock::_setMatch', arguments);
+            console.log('sherlock.Sherlock:_setMatch', arguments);
 
             // clear any old graphics
             this.graphicsLayer.clear();
@@ -587,57 +538,39 @@ define([
             // clear prompt message
             this.hideMessage();
 
-            var predicate = '';
-
             // set textbox to full value
-            if (!this.contextField) {
+            var contextValue;
+            if (!this.provider.contextField) {
                 this.textBox.value = (has('ie') < 9) ? row.innerText : row.textContent;
-                predicate = this.searchField + ' = \'' + this.textBox.value + '\'';
             } else {
                 // dig deeper when context values are present
                 this.textBox.value = (has('ie') < 9) ? row.children[0].innerText : row.children[0].textContent;
-                var contextValue = row.children[1].innerHTML;
-                if (contextValue.length > 0) {
-                    predicate = this.searchField + ' = \'' + this.textBox.value +
-                        '\' AND ' + this.contextField + ' = \'' + contextValue + '\'';
-                } else {
-                    predicate = this.searchField + ' = \'' + this.textBox.value +
-                        '\' AND ' + this.contextField + ' IS NULL';
-                }
+                contextValue = row.children[1].innerHTML;
             }
 
             // execute query / canceling any previous query
-            if (this._deferred) {
-                this._deferred.cancel();
-            }
+            this.provider.cancelPendingRequests();
 
-            this._deferred = this.webApi.search(this.searchLayer, this.outFields.concat('shape@'), {
-                predicate: predicate,
-                spatialReference: this.wkid
-            }).then(lang.hitch(this,
-                    function (response) {
+            this.provider.getFeature(this.textBox.value, contextValue)
+                .then(lang.hitch(this,
+                    function (graphics) {
                         // set switch to prevent graphic from being cleared
                         this._addingGraphic = true;
 
-                        response = array.map(response, function _convertGeometryToGraphic(geometry) {
-                            return new Graphic(geometry);
-                        });
-
-                        if (response.length === 1 || response[0].geometry.type === 'polygon') {
-                            this._zoom(response[0]);
+                        if (graphics.length === 1 || graphics[0].geometry.type === 'polygon') {
+                            this._zoom(graphics[0]);
                         } else {
-                            this._zoomToMultipleFeatures(response);
+                            this._zoomToMultipleFeatures(graphics);
                         }
                     }
                 ), lang.hitch(this,
                     function (err) {
-                        this._onQueryTaskError(err);
                         // clear table
                         this._deleteAllTableRows(this.matchesTable);
 
                         // swallow errors from cancels
                         if (err.message !== 'undefined') {
-                            throw new Error('agrc.widgets.locate.Sherlock ArcGISServerError: ' + err.message);
+                            throw new Error('sherlock.Sherlock Provider Error: ' + err.message);
                         }
 
                         this.hideSpinner();
@@ -648,7 +581,7 @@ define([
             // summary:
             //      shows a messages at the top of the matches list
             // msg: String
-            console.log('agrc.widgets.locate.Sherlock::showMessage', arguments);
+            console.log('sherlock.Sherlock:showMessage', arguments);
 
             this.msg.innerHTML = msg;
             domStyle.set(this.msg, 'display', 'block');
@@ -657,7 +590,7 @@ define([
         hideMessage: function () {
             // summary:
             //      hids the message at the top of the matches list
-            console.log('agrc.widgets.locate.Sherlock::hideMessage', arguments);
+            console.log('sherlock.Sherlock:hideMessage', arguments);
 
             domStyle.set(this.msg, 'display', 'none');
         },
@@ -668,7 +601,7 @@ define([
             //      The esri.Graphic that you want to zoom to.
             // tags:
             //      private
-            console.log('agrc.widgets.locate.Sherlock::_zoom', arguments);
+            console.log('sherlock.Sherlock:_zoom', arguments);
 
             var sym;
 
@@ -700,7 +633,7 @@ define([
         onZoomed: function () {
             // summary:
             //      Fires after the map has been zoomed to the graphic.
-            console.log('agrc.widgets.locate.Sherlock::onZoomed', arguments);
+            console.log('sherlock.Sherlock:onZoomed', arguments);
         },
         _deleteAllTableRows: function (table) {
             // summary:
@@ -709,7 +642,7 @@ define([
             //      The table that you want to act upon.
             // tags:
             //      private
-            console.log('agrc.widgets.locate.Sherlock::_deleteAllTableRows', arguments);
+            console.log('sherlock.Sherlock:_deleteAllTableRows', arguments);
 
             // delete all rows in table
             query('li.match', this.matchesTable).forEach(domConstruct.destroy);
@@ -727,7 +660,7 @@ define([
             //      If true, table is shown. If false, table is hidden.
             // tags:
             //      private
-            console.log('agrc.widgets.locate.Sherlock::_toggleTable', arguments);
+            console.log('sherlock.Sherlock:_toggleTable', arguments);
 
             var displayValue = (show) ? 'block' : 'none';
             domStyle.set(this.matchesTable, 'display', displayValue);
@@ -739,15 +672,16 @@ define([
             //      specified, no sorting is done since it's already done on the server
             //      with the 'ORDER BY' statement. I tried to add a second field to the
             //      'ORDER BY' statement but ArcGIS Server just choked.
-            console.log('agrc.widgets.locate.Sherlock::_sortArray', arguments);
+            console.log('sherlock.Sherlock:_sortArray', arguments);
 
             // custom sort function
             var that = this;
 
             function sortFeatures(a, b) {
-                var searchField = that.searchField;
+                var searchField = that.provider.searchField;
+                var contextField = that.provider.contextField;
                 if (a.attributes[searchField] === b.attributes[searchField]) {
-                    if (a.attributes[that.contextField] < b.attributes[that.contextField]) {
+                    if (a.attributes[contextField] < b.attributes[contextField]) {
                         return -1;
                     } else {
                         return 1;
@@ -769,7 +703,7 @@ define([
             //      Array of features that you want to zoom to.
             // tags:
             //      private
-            console.log('agrc.widgets.locate.Sherlock::_zoomToMultipleFeatures', arguments);
+            console.log('sherlock.Sherlock:_zoomToMultipleFeatures', arguments);
 
             var that = this;
             var graphics = [];
@@ -818,7 +752,7 @@ define([
         destroyRecursive: function () {
             // summary:
             //     Overridden from dijit._Widget. Removes graphics layer from map.
-            console.log('agrc.widgets.locate.Sherlock::detroyRecursive', arguments);
+            console.log('sherlock.Sherlock:detroyRecursive', arguments);
 
             if (this.graphicsLayer) {
                 this.map.removeLayer(this.graphicsLayer);

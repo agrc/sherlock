@@ -1,5 +1,5 @@
 {
-  "name": "sherlock",
+  "name": "agrc-sherlock",
   "version": "0.0.0",
   "authors": [
     "steveoh <sgourley@utah.gov>",
@@ -23,22 +23,26 @@
   ],
   "license": "MIT",
   "ignore": [
-    ".grunt",
-    "bower_components",
-    "node_modules",
-    "tests",
+    ".eslintrc",
     ".gitattributes",
     ".gitignore",
-    ".eslintrc",
-    "GruntFile.js"
+    ".grunt",
+    ".lgtm",
+    ".travis.yml",
+    "bower_components",
+    "dojoConfig.js",
+    "GruntFile.js",
+    "node_modules",
+    "secrets.sample.json",
+    "tests"
   ],
   "dependencies": {
+    "agrc-jasmine-matchers": "~0.1.0",
+    "agrc": "agrc-widgets#~4.0.0",
+    "bootstrap": "~3.3.5",
     "esri": "arcgis-js-api#~3.15.0",
     "jasmine-favicon-reporter": "*",
-    "agrc-jasmine-matchers": "~0.1.0",
     "jasmine-jsreporter": "~0.1.2",
-    "bootstrap": "~3.3.5",
-    "agrc": "agrc-widgets#~4.0.0",
     "spinjs": "spin.js#~2.3.2"
   },
   "resolutions": {

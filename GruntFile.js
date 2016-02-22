@@ -30,14 +30,20 @@ module.exports = function (grunt) {
     var docPort = grunt.option('docPort') || jasminePort - 1;
     var testHost = 'http://localhost:' + jasminePort;
     var docHost = 'http:/localhost:' + docPort;
-    var jsFiles = ['!bower_components', '!node_modules', '!.git', '!.grunt', '*.js', 'tests/**/*.js'];
-    var otherFiles = ['templates/*.html', 'tests/*.html'];
+    var jsFiles = ['src/**/*.js', 'tests/**/*.js'];
+    var otherFiles = [
+        'src/**/*.html',
+        'tests/**/*.html',
+        'dojoConfig.js',
+        'GruntFile.js'
+    ];
+    var stylFiles = 'src/**/*.styl';
     var bumpFiles = [
         'package.json',
         'bower.json'
     ];
     var sauceConfig = {
-        urls: ['http://127.0.0.1:8001/tests/_SpecRunner.html'],
+        urls: ['http://127.0.0.1:8001/_SpecRunner.html'],
         tunnelTimeout: 120,
         build: process.env.TRAVIS_JOB_ID,
         browsers: browsers,
@@ -66,9 +72,7 @@ module.exports = function (grunt) {
                 options: {
                     removeUnusedDependencies: false
                 },
-                files: [{
-                    src: 'Sherlock.js'
-                }]
+                files: [{src: jsFiles}]
             }
         },
         bump: {
@@ -92,10 +96,10 @@ module.exports = function (grunt) {
             },
             open: {
                 options: {
-                    open: testHost + '/tests/_SpecRunner.html'
+                    open: testHost + '/_SpecRunner.html'
                 }
             },
-            jasmine: { }
+            jasmine: {}
         },
         documentation: {
             Sherlock: {
@@ -129,16 +133,16 @@ module.exports = function (grunt) {
             main: {
                 src: [],
                 options: {
-                    outfile: 'tests/_SpecRunner.html',
+                    outfile: '_SpecRunner.html',
                     specs: ['tests/**/Spec*.js'],
                     vendor: [
                         'bower_components/jasmine-favicon-reporter/vendor/favico.js',
                         'bower_components/jasmine-favicon-reporter/jasmine-favicon-reporter.js',
                         'bower_components/jasmine-jsreporter/jasmine-jsreporter.js',
-                        '../tests/dojoConfig.js',
+                        'tests/dojoConfig.js',
                         'bower_components/dojo/dojo.js',
-                        '../tests/jasmineAMDErrorChecking.js',
-                        '../tests/jsReporterSanitizer.js'
+                        'tests/jasmineAMDErrorChecking.js',
+                        'tests/jsReporterSanitizer.js'
                     ],
                     host: testHost
                 }
@@ -157,7 +161,7 @@ module.exports = function (grunt) {
                 files: [{
                     expand: true,
                     cwd: './',
-                    src: ['resources/*.styl'],
+                    src: stylFiles,
                     dest: './',
                     ext: '.css'
                 }]
@@ -168,7 +172,7 @@ module.exports = function (grunt) {
                 livereload: true
             },
             src: {
-                files: jsFiles.concat(otherFiles).concat('resources/*.styl'),
+                files: jsFiles.concat(otherFiles).concat(stylFiles),
                 tasks: ['amdcheck', 'newer:eslint:main', 'jasmine:main:build', 'stylus']
             },
             docs: {

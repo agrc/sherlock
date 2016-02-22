@@ -1,5 +1,5 @@
 require([
-    'sherlock',
+    'sherlock/Sherlock',
 
     'dojo/dom-construct'
 ], function (

@@ -747,7 +747,7 @@ define([
             array.forEach(graphics, function (g) {
                 that.graphicsLayer.add(g);
             });
-            console.log('this.graphicsLayer.graphics', this.graphicsLayer.graphics);
+            this.onZoomed();
         },
         destroyRecursive: function () {
             // summary:

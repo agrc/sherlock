@@ -16,7 +16,14 @@ require([
         var map = {
             on: function () {},
             loaded: true,
-            removeLayer: function () {}
+            removeLayer: function () {},
+            setExtent: function () {}
+        };
+        var feature = {
+            geometry: {
+                getExtent: function () {}
+            },
+            setSymbol: function () {}
         };
 
         beforeEach(function () {
@@ -58,6 +65,26 @@ require([
                 });
 
                 expect(map.addLayer.calls.count()).toBe(1);
+            });
+        });
+        describe('_zoomToMultipleFeatures', function () {
+            it('fires zoomed event', function () {
+                var spy = jasmine.createSpy('zoomedCallback');
+                widget.on('zoomed', spy);
+
+                widget._zoomToMultipleFeatures([feature]);
+
+                expect(spy).toHaveBeenCalled();
+            });
+        });
+        describe('_zoom', function () {
+            it('fires zoomed event', function () {
+                var spy = jasmine.createSpy('zoomedCallback');
+                widget.on('zoomed', spy);
+
+                widget._zoom(feature);
+
+                expect(spy).toHaveBeenCalled();
             });
         });
     });

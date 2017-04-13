@@ -30,7 +30,7 @@ module.exports = function (grunt) {
     var docPort = grunt.option('docPort') || jasminePort - 1;
     var testHost = 'http://localhost:' + jasminePort;
     var docHost = 'http:/localhost:' + docPort;
-    var jsFiles = ['src/**/*.js', 'tests/**/*.js'];
+    var jsFiles = ['*.js', 'tests/**/*.js'];
     var otherFiles = [
         'src/**/*.html',
         'tests/**/*.html',

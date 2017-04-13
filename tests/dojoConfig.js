@@ -7,6 +7,7 @@ window.dojoConfig = {
         'dijit',
         'dojox',
         'esri',
+        'moment',
         'spinjs',
         {
             name: 'sherlock',

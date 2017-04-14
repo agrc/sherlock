@@ -37,12 +37,9 @@
     "tests"
   ],
   "dependencies": {
-    "agrc-jasmine-matchers": "~0.1.0",
     "agrc": "agrc-widgets#~6.0",
     "bootstrap": "~3.3.5",
     "esri": "arcgis-js-api#~3",
-    "jasmine-favicon-reporter": "*",
-    "jasmine-jsreporter": "~0.1.2",
     "spinjs": "spin.js#~2.3.2"
   },
   "resolutions": {
@@ -52,6 +49,8 @@
     "dojo": "v1.12.1/esri-3.20.0"
   },
   "devDependencies": {
-    "bootstrap": "^3.3.7"
+    "agrc-jasmine-matchers": "~0.1.0",
+    "jasmine-favicon-reporter": "*",
+    "jasmine-jsreporter": "~0.1.2"
   }
 }

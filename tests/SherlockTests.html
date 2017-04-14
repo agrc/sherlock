@@ -36,6 +36,8 @@
     <script type='text/javascript' src="../bower_components/dojo/dojo.js"></script>
     <script type="text/javascript">
         var widgetUnderTest;
+        var quadWord = '<your quad word>';
+        var apiKey = '<your api key>';
 
         require({
             map: {
@@ -58,12 +60,15 @@
 
             mapDependency
         ) {
-            map = new mapDependency('map-div');
+            map = new mapDependency('map-div', {
+                quadWord: quadWord
+            });
 
             var countiesProvider = new WebAPI(
-                'AGRC-ApiExplorer',
+                apiKey,
                 'SGID10.Boundaries.Counties',
-                'NAME'
+                'NAME',
+                {wkid: 3857}
             );
             widgetUnderTest = new Sherlock({
                 provider: countiesProvider,
@@ -81,10 +86,10 @@
             w2.startup();
 
             var mapServiceProvider = new MapService(
-                'http://mapserv.utah.gov/arcgis/rest/services/SGID/LandOwnership/MapServer/0',
-                'AGENCY',
+                'http://mapserv.utah.gov/arcgis/rest/services/BBEcon/MapService/MapServer/7',
+                'NAME',
                 {
-                    contextField: 'OWNER'
+                    contextField: 'TYPE'
                 }
             );
             var w3 = new Sherlock({

@@ -5,7 +5,6 @@ define([
     'dojo/dom-class',
     'dojo/dom-construct',
     'dojo/dom-style',
-    'dojo/has',
     'dojo/keys',
     'dojo/mouse',
     'dojo/on',
@@ -22,9 +21,7 @@ define([
     'esri/symbols/SimpleLineSymbol',
     'esri/symbols/SimpleMarkerSymbol',
 
-    'spinjs/spin',
-
-    'dojo/_base/sniff'
+    'spinjs/spin'
 ], function (
     _TemplatedMixin,
     _WidgetBase,
@@ -32,7 +29,6 @@ define([
     domClass,
     domConstruct,
     domStyle,
-    has,
     keys,
     mouse,
     on,
@@ -535,10 +531,10 @@ define([
             // set textbox to full value
             var contextValue;
             if (!this.provider.contextField) {
-                this.textBox.value = (has('ie') < 9) ? row.innerText : row.textContent;
+                this.textBox.value = row.textContent;
             } else {
                 // dig deeper when context values are present
-                this.textBox.value = (has('ie') < 9) ? row.children[0].innerText : row.children[0].textContent;
+                this.textBox.value = row.children[0].textContent;
                 contextValue = row.children[1].innerHTML;
             }
 

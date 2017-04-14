@@ -4,6 +4,7 @@ define([
 
     'dojo/dom-class',
     'dojo/dom-construct',
+    'dojo/dom-geometry',
     'dojo/dom-style',
     'dojo/keys',
     'dojo/mouse',
@@ -28,6 +29,7 @@ define([
 
     domClass,
     domConstruct,
+    domGeom,
     domStyle,
     keys,
     mouse,
@@ -126,6 +128,10 @@ define([
         // preserveGraphics: Boolean (optional)
         //      Set to true if you want the graphics to persist after map navigation.
         preserveGraphics: false,
+
+        // appendToBody: Boolean (optional)
+        //      When true (default) the matches table is appended to the body element to allow it to overlap all others
+        appendToBody: true,
 
         postCreate: function () {
             // summary:
@@ -651,6 +657,17 @@ define([
             // tags:
             //      private
             console.log('sherlock.Sherlock:_toggleTable', arguments);
+
+            if (this.appendToBody) {
+                // run this every time the matches table is shown just in
+                // case the widget has moved within the flow of the page
+                domConstruct.place(this.matchesTable, document.body);
+                var textBoxPosition = domGeom.position(this.textBox);
+                domStyle.set(this.matchesTable, {
+                    top: textBoxPosition.y + textBoxPosition.h + 'px',
+                    left: textBoxPosition.x + 'px'
+                });
+            }
 
             var displayValue = (show) ? 'block' : 'none';
             domStyle.set(this.matchesTable, 'display', displayValue);

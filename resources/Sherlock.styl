@@ -1,5 +1,6 @@
 $highlight-text-color = #ffffff
 $highlight-color = #428bca
+$width = 200px
 
 .dropdown-menu form .sherlock
     position: relative
@@ -9,33 +10,13 @@ $highlight-color = #428bca
     position: absolute
     right: 0
     top: 0
-    width: 200px
+    width: $width
     z-index: 25
     .input-group-addon
         width: 39px
     .text-box
         box-shadow: 0 6px 12px rgba(0, 0, 0, .175)
     .input-group,
-    .matches-table
-        width: 190px
-    [data-dojo-attach-point='matchesList']
-        display: block
-        width: 100%
-    .matches-table
-        background-color: white
-        display: none
-        float: left
-        font-size: 12px
-        position: absolute
-        top: 40px
-        z-index: 99
-        li.match:hover,
-        .highlighted-row
-            background-color: $highlight-color
-            color: $highlight-text-color
-            cursor: pointer
-        li
-            padding: 2px 12px
     span.glyphicon-search
         top: 0
     li.dropdown-header
@@ -46,3 +27,21 @@ $highlight-color = #428bca
         float: right
     [data-dojo-attach-point='spinnerDiv']
         padding-left: 7px
+
+.matches-table
+    width: $width - 10px
+    background-color: white
+    display: none
+    font-size: 12px
+    position: absolute
+    z-index: 9999
+    [data-dojo-attach-point='matchesList']
+        display: block
+        width: 100%
+    li.match:hover,
+    .highlighted-row
+        background-color: $highlight-color
+        color: $highlight-text-color
+        cursor: pointer
+    li
+        padding: 2px 12px

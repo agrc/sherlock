@@ -1,6 +1,4 @@
 define([
-    'agrc/modules/WebAPI',
-
     'dijit/_TemplatedMixin',
     'dijit/_WidgetBase',
 
@@ -19,7 +17,6 @@ define([
     'dojo/_base/lang',
 
     'esri/geometry/Multipoint',
-    'esri/graphic',
     'esri/layers/GraphicsLayer',
     'esri/symbols/SimpleFillSymbol',
     'esri/symbols/SimpleLineSymbol',
@@ -29,8 +26,6 @@ define([
 
     'dojo/_base/sniff'
 ], function (
-    WebApi,
-
     _TemplatedMixin,
     _WidgetBase,
 
@@ -49,7 +44,6 @@ define([
     lang,
 
     Multipoint,
-    Graphic,
     GraphicsLayer,
     SimpleFillSymbol,
     SimpleLineSymbol,

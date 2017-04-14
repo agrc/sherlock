@@ -52,8 +52,6 @@ define([
         constructor: function (url, searchField, options) {
             console.log('sherlock.providers.MapService:constructor', arguments);
 
-            var that = this;
-
             this.searchField = searchField;
             var outFields;
             if (options) {
@@ -71,8 +69,8 @@ define([
 
             this._queryTask = new QueryTask(url);
             this._queryTask.on('error', function handleQueryTaskError(er) {
-                that.emit('error', er);
-            });
+                this.emit('error', er);
+            }.bind(this));
         },
         /**
          * Initiates a search for features

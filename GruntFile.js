@@ -26,18 +26,14 @@ var browsers = [{
 module.exports = function (grunt) {
     require('load-grunt-tasks')(grunt);
 
-    var jasminePort = grunt.option('jasminePort') || 8001;
-    var docPort = grunt.option('docPort') || jasminePort - 1;
-    var testHost = 'http://localhost:' + jasminePort;
-    var docHost = 'http:/localhost:' + docPort;
-    var jsFiles = ['*.js', 'tests/**/*.js'];
+    var jsFiles = ['*.js', 'providers/*.js', 'tests/**/*.js'];
     var otherFiles = [
         'src/**/*.html',
         'tests/**/*.html',
         'dojoConfig.js',
         'GruntFile.js'
     ];
-    var stylFiles = 'src/**/*.styl';
+    var stylFiles = 'resources/*.styl';
     var bumpFiles = [
         'package.json',
         'bower.json'
@@ -85,39 +81,13 @@ module.exports = function (grunt) {
         connect: {
             options: {
                 livereload: true,
-                port: jasminePort,
+                port: 8000,
                 base: '.'
             },
-            docs: {
-                options: {
-                    port: docPort,
-                    open: docHost + '/doc'
-                }
-            },
+            jasmine: {},
             open: {
                 options: {
-                    open: testHost + '/_SpecRunner.html'
-                }
-            },
-            jasmine: {}
-        },
-        documentation: {
-            Sherlock: {
-                files: [{
-                    src: 'Sherlock.js'
-                }],
-                options: {
-                    github: true,
-                    format: 'md',
-                    filename: './doc/Sherlock.md'
-                }
-            },
-            SherlockHtml: {
-                files: [{
-                    src: 'Sherlock.js'
-                }],
-                options: {
-                    destination: './doc'
+                    open: 'http://localhost:8000/_SpecRunner.html'
                 }
             }
         },
@@ -144,7 +114,7 @@ module.exports = function (grunt) {
                         'tests/jasmineAMDErrorChecking.js',
                         'tests/jsReporterSanitizer.js'
                     ],
-                    host: testHost
+                    host: 'http://localhost:8000'
                 }
             }
         },
@@ -173,36 +143,29 @@ module.exports = function (grunt) {
             },
             src: {
                 files: jsFiles.concat(otherFiles).concat(stylFiles),
-                tasks: ['amdcheck', 'newer:eslint:main', 'jasmine:main:build', 'stylus']
-            },
-            docs: {
-                files: 'Sherlock.js',
-                tasks: ['documentation']
+                tasks: ['amdcheck', 'eslint', 'jasmine:main:build', 'stylus']
             }
         }
     });
 
     grunt.registerTask('default', [
         'jasmine:main:build',
-        'eslint:main',
-        'amdcheck:main',
+        'eslint',
+        'amdcheck',
         'connect:jasmine',
         'stylus',
-        'watch:src'
+        'watch'
     ]);
 
     grunt.registerTask('launch', [
         'jasmine:main:build',
-        'eslint:main',
-        'amdcheck:main',
+        'eslint',
+        'amdcheck',
+        'eslint',
+        'amdcheck',
         'connect:open',
         'stylus',
-        'watch:src'
-    ]);
-
-    grunt.registerTask('docs', [
-        'documentation:Sherlock',
-        'watch:docs'
+        'watch'
     ]);
 
     grunt.registerTask('travis', [

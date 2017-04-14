@@ -1,9 +1,11 @@
 define([
+    'dojo/Evented',
     'dojo/_base/declare'
 ], function (
+    Evented,
     declare
 ) {
-    return declare(null, {
+    return declare([Evented], {
         /**
          * @property {Deferred} _deferred - The deferred returned from the search for the provider
          * @private

@@ -1,5 +1,4 @@
 define([
-    'dojo/Evented',
     'dojo/_base/declare',
 
     'esri/tasks/query',
@@ -7,7 +6,6 @@ define([
 
     'sherlock/providers/_ProviderMixin'
 ], function (
-    Evented,
     declare,
 
     Query,

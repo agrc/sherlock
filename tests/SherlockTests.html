@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
 <head>
     <title>Sherlock Tests</title>
@@ -7,26 +7,26 @@
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
     <!-- CSS -->
-    <link rel="stylesheet" type="text/css" href="../bower_components/esri/css/esri.css" />
+    <link rel="stylesheet" type="text/css" href="../bower_components/esri/css/main.css" />
     <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="../resources/Sherlock.css">
     <style type='text/css'>
-    #map-div {
-        height: 400px;
-        width: 500px;
-        border: solid 1px gray;
-        position: relative;
-        top: 60px;
-        margin-bottom: 80px;
-    }
-    #search-div2 {
-        position: relative;
-        z-index: 27;
-    }
-    #search-div3 {
-        position: relative;
-        z-index: 26;
-    }
+        #map-div {
+            height: 400px;
+            width: 500px;
+            border: solid 1px gray;
+            position: relative;
+            top: 60px;
+            margin-bottom: 80px;
+        }
+        #search-div2 {
+            position: relative;
+            z-index: 27;
+        }
+        #search-div3 {
+            position: relative;
+            z-index: 26;
+        }
     </style>
 
     <!-- JAVASCRIPT -->
@@ -36,8 +36,7 @@
     <script type='text/javascript' src="../bower_components/dojo/dojo.js"></script>
     <script type="text/javascript">
         var widgetUnderTest;
-        var quadWord = '<your quad word>';
-        var apiKey = '<your api key>';
+        var apiKey = 'AGRC-63E1FF17767822';
 
         require({
             map: {
@@ -46,41 +45,46 @@
                 }
             }
         }, [
-        'sherlock/Sherlock',
-        'sherlock/providers/WebAPI',
-        'sherlock/providers/MapService',
-        'agrc/widgets/map/BaseMap',
+            'sherlock/Sherlock',
+            'sherlock/providers/WebAPI',
+            'sherlock/providers/MapService',
+            'esri/Map',
+            'esri/views/MapView',
 
-        'dojo/domReady!'
-        ],
-        function(
+            'dojo/domReady!'
+        ], function (
             Sherlock,
             WebAPI,
             MapService,
 
-            mapDependency
+            Map,
+            MapView
         ) {
-            map = new mapDependency('map-div', {
-                quadWord: quadWord
+            window.mapView = new MapView({
+                map: new Map({
+                    basemap: 'streets',
+                    spatialReference: {wkid: 3857}
+                }),
+                container: 'map-div'
             });
 
             var countiesProvider = new WebAPI(
                 apiKey,
                 'SGID10.Boundaries.Counties',
-                'NAME',
-                {wkid: 3857}
+                'NAME'
             );
             widgetUnderTest = new Sherlock({
                 provider: countiesProvider,
-                map: map,
+                mapView: window.mapView,
                 maxResultsToDisplay: 10,
                 placeHolder: 'placeholder txt'
             }, 'search-div');
             widgetUnderTest.startup();
+            window.mapView.ui.add(widgetUnderTest.domNode, 'upper-left');
 
             var w2 = new Sherlock({
                 provider: countiesProvider,
-                map: map,
+                mapView: window.mapView,
                 maxResultsToDisplay: 10,
                 appendToBody: false
             }, 'search-div2');
@@ -95,21 +99,21 @@
             );
             var w3 = new Sherlock({
                 provider: mapServiceProvider,
-                map: map,
+                mapView: window.mapView,
                 maxResultsToDisplay: 10
             }, 'search-div3');
             w3.startup();
 
             var w4 = new Sherlock({
                 provider: mapServiceProvider,
-                map: map,
+                mapView: window.mapView,
                 maxResultsToDisplay: 10
             }, 'search-div-dropdown');
             w4.startup();
         });
     </script>
 </head>
-<body class='claro'>
+<body>
     <div class="navbar navbar-inverse navbar-fixed-top" >
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -119,7 +123,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Magic Zoomer</a>
+            <a class="navbar-brand" href="#">Sherlock Tests</a>
         </div>
         <div class="collapse navbar-collapse navbar-main-collapse">
             <ul class="nav navbar-nav">
@@ -137,8 +141,8 @@
         </div>
     </div>
     <div id='map-div'>
-        <div id='search-div'></div>
     </div>
+    <div id='search-div'></div>
     layout tests
     <div id="search-div2"></div>
     <br><br>

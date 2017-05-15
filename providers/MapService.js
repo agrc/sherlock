@@ -1,15 +1,15 @@
 define([
     'dojo/_base/declare',
 
-    'esri/tasks/query',
     'esri/tasks/QueryTask',
+    'esri/tasks/support/Query',
 
     'sherlock/providers/_ProviderMixin'
 ], function (
     declare,
 
-    Query,
     QueryTask,
+    Query,
 
     _ProviderMixin
 ) {
@@ -48,6 +48,7 @@ define([
          * @param {string} [options.contextField] - A second field to display in the results table to
          * give context to the results in case of duplicate results.
          * @param {string} [options.token] - Token for working with secured services
+         * @param {number} [options.wkid] - WKID for spatial reference. Defaults to 3857.
          */
         constructor: function (url, searchField, options) {
             console.log('sherlock.providers.MapService:constructor', arguments);
@@ -65,12 +66,11 @@ define([
 
             this._query = new Query();
             this._query.returnGeometry = false;
-            this._query.outFields = this._getOutFields(outFields, this.contextField, this.searchField)
+            this._query.outFields = this._getOutFields(outFields, this.contextField, this.searchField);
+            var wkid = options.wkid || 3857;
+            this._query.outSpatialReference = {wkid: wkid};
 
             this._queryTask = new QueryTask(url);
-            this._queryTask.on('error', function handleQueryTaskError(er) {
-                this.emit('error', er);
-            }.bind(this));
         },
         /**
          * Initiates a search for features
@@ -83,10 +83,14 @@ define([
             this._query.returnGeometry = false;
             this._query.where = this._getSearchClause(searchString);
 
-            this._deferred = this._queryTask.execute(this._query)
-                .then(function handleQueryTaskResponse(featureSet) {
+            this._deferred = this._queryTask.execute(this._query).then(
+                function handleQueryTaskResponse(featureSet) {
                     return featureSet.features;
-                });
+                },
+                function handleQueryTaskError(er) {
+                    this.emit('error', er);
+                }.bind(this)
+            );
 
             return this._deferred;
         },
@@ -102,10 +106,9 @@ define([
             this._query.returnGeometry = true;
             this._query.where = this._getFeatureClause(searchValue, contextValue);
 
-            this._deferred = this._queryTask.execute(this._query)
-                .then(function handleQueryTaskResponse(featureSet) {
-                    return featureSet.features;
-                });
+            this._deferred = this._queryTask.execute(this._query).then(function handleQueryTaskResponse(featureSet) {
+                return featureSet.features;
+            });
 
             return this._deferred;
         }

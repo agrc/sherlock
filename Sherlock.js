@@ -12,12 +12,10 @@ define([
     'dojo/query',
     'dojo/text!./templates/Sherlock.html',
     'dojo/_base/array',
-    'dojo/_base/Color',
     'dojo/_base/declare',
     'dojo/_base/lang',
 
-    'esri/geometry/Multipoint',
-    'esri/layers/GraphicsLayer',
+    'esri/core/watchUtils',
     'esri/symbols/SimpleFillSymbol',
     'esri/symbols/SimpleLineSymbol',
     'esri/symbols/SimpleMarkerSymbol',
@@ -37,12 +35,10 @@ define([
     query,
     template,
     array,
-    Color,
     declare,
     lang,
 
-    Multipoint,
-    GraphicsLayer,
+    watchUtils,
     SimpleFillSymbol,
     SimpleLineSymbol,
     SimpleMarkerSymbol,
@@ -80,9 +76,9 @@ define([
 
         // Parameters to constructor
 
-        // map: esri.Map
+        // mapView: esri.Map
         //      esri.Map reference.
-        map: null,
+        mapView: null,
 
         // provider: Object
         //      An object that provides searching functionality.
@@ -191,55 +187,39 @@ define([
             //      private
             console.log('sherlock.Sherlock:_setUpGraphicsLayer', arguments);
 
-            var afterMapLoaded = lang.hitch(this,
-                function () {
-                    if (!this.graphicsLayer) {
-                        this.graphicsLayer = new GraphicsLayer();
-                        this.map.addLayer(this.graphicsLayer);
-                    }
-
-                    if (!this.preserveGraphics) {
-                        // wire clear graphics event
-                        this.map.on('extent-change', lang.hitch(this,
-                            function () {
-                                if (this._addingGraphic === false) {
-                                    this.graphicsLayer.clear();
-                                }
-
-                                this._addingGraphic = false;
-                            }
-                        ));
-                    }
-                });
+            var afterMapLoaded = function () {
+                if (!this.graphicsLayer) {
+                    this.graphicsLayer = this.mapView.graphics;
+                }
+            }.bind(this);
 
             // create new graphics layer and add to map
-            if (this.map.loaded) {
-                afterMapLoaded();
-            } else {
-                this.map.on('load', afterMapLoaded);
-            }
+            this.mapView.then(afterMapLoaded);
 
             // set up new symbols, if needed
             if (!this.symbolFill) {
-                this.symbolFill = new SimpleFillSymbol(
-                    SimpleFillSymbol.STYLE_NULL,
-                    new SimpleLineSymbol(
-                        SimpleLineSymbol.STYLE_DASHDOT,
-                        new Color([255, 255, 0]),
-                        1.5),
-                    null);
+                this.symbolFill = new SimpleFillSymbol({
+                    style: 'none',
+                    outline: {
+                        style: 'dash-dot',
+                        color: [255, 255, 0],
+                        width: 1.5
+                    }
+                });
             }
 
             if (!this.symbolLine) {
-                this.symbolLine = new SimpleLineSymbol()
-                    .setColor(new Color([255, 255, 0]))
-                    .setWidth(5);
+                this.symbolLine = new SimpleLineSymbol({
+                    color: [255, 255, 0],
+                    width: 5
+                });
             }
 
             if (!this.symbolPoint) {
-                this.symbolPoint = new SimpleMarkerSymbol()
-                    .setColor([255, 255, 0, 0.5])
-                    .setSize(10);
+                this.symbolPoint = new SimpleMarkerSymbol({
+                    color: [255, 255, 0, 0.5],
+                    size: 10
+                });
             }
         },
         _wireEvents: function () {
@@ -526,7 +506,7 @@ define([
             console.log('sherlock.Sherlock:_setMatch', arguments);
 
             // clear any old graphics
-            this.graphicsLayer.clear();
+            this.graphicsLayer.removeAll();
 
             // clear table
             this._toggleTable(false);
@@ -548,30 +528,21 @@ define([
             this.provider.cancelPendingRequests();
 
             this.provider.getFeature(this.textBox.value, contextValue)
-                .then(lang.hitch(this,
-                    function (graphics) {
-                        // set switch to prevent graphic from being cleared
-                        this._addingGraphic = true;
+                .then(function (graphics) {
+                    this._zoom(graphics);
+                }.bind(this),
+                function (err) {
+                    // clear table
+                    this._deleteAllTableRows(this.matchesTable);
 
-                        if (graphics.length === 1 || graphics[0].geometry.type === 'polygon') {
-                            this._zoom(graphics[0]);
-                        } else {
-                            this._zoomToMultipleFeatures(graphics);
-                        }
+                    // swallow errors from cancels
+                    if (err.message !== 'undefined') {
+                        throw new Error('sherlock.Sherlock Provider Error: ' + err.message);
                     }
-                ), lang.hitch(this,
-                    function (err) {
-                        // clear table
-                        this._deleteAllTableRows(this.matchesTable);
 
-                        // swallow errors from cancels
-                        if (err.message !== 'undefined') {
-                            throw new Error('sherlock.Sherlock Provider Error: ' + err.message);
-                        }
-
-                        this.hideSpinner();
-                    }
-                ));
+                    this.hideSpinner();
+                }.bind(this)
+            );
         },
         showMessage: function (msg) {
             // summary:
@@ -590,41 +561,52 @@ define([
 
             domStyle.set(this.msg, 'display', 'none');
         },
-        _zoom: function (graphic) {
+        _zoom: function (graphics) {
             // summary:
-            //      Zooms to the passed in graphic.
-            // graphic: esri.Graphic
-            //      The esri.Graphic that you want to zoom to.
+            //      Zooms to the passed in graphic(s).
+            // graphics: esri.Graphic[]
+            //      The esri.Graphic(s) that you want to zoom to.
             // tags:
             //      private
             console.log('sherlock.Sherlock:_zoom', arguments);
 
-            var sym;
+            var goToPromise;
+            var symbol;
 
             // check for point feature
-            if (graphic.geometry.type === 'point') {
-                // zoom and center on point
+            if (graphics[0].geometry.type === 'point') {
+                var lod = this.mapView.map.basemap.baseLayers.items[0].tileInfo.lods.length - this.zoomLevel;
 
-                // get base layer
-                var bLayer = this.map.getLayer(this.map.layerIds[0]);
+                goToPromise = this.mapView.goTo({
+                    target: graphics,
+                    zoom: lod
+                });
 
-                // get next to lowest lod
-                var lod = bLayer.tileInfo.lods.length - this.zoomLevel;
-
-                this.map.centerAndZoom(graphic.geometry, lod);
-
-                sym = this.symbolPoint;
+                symbol = this.symbolPoint;
             } else {
                 // zoom to feature
-                this.map.setExtent(graphic.geometry.getExtent(), true);
+                goToPromise = this.mapView.goTo(graphics);
 
-                sym = (graphic.geometry.type === 'polyline') ? this.symbolLine : this.symbolFill;
+                symbol = (graphics[0].geometry.type === 'polyline') ? this.symbolLine : this.symbolFill;
             }
-            // add graphic
-            graphic.setSymbol(sym);
-            this.graphicsLayer.add(graphic);
 
-            this.onZoomed(graphic);
+            graphics.forEach(function (graphic) {
+                graphic.symbol = symbol;
+            });
+
+            goToPromise.then(function () {
+                this.graphicsLayer.addMany(graphics);
+
+                if (!this.preserveGraphics) {
+                    watchUtils.once(this.mapView, 'extent', function () {
+                        this.graphicsLayer.removeAll();
+                    }.bind(this));
+                }
+            }.bind(this));
+
+            this.onZoomed(graphics);
+
+            return goToPromise;
         },
         onZoomed: function () {
             // summary:
@@ -702,70 +684,6 @@ define([
 
             // sort features
             return list.sort(sortFeatures);
-        },
-        _zoomToMultipleFeatures: function (features) {
-            // summary:
-            //      Creates a multi point from features and zooms to that.
-            // features: Object[]
-            //      Array of features that you want to zoom to.
-            // tags:
-            //      private
-            console.log('sherlock.Sherlock:_zoomToMultipleFeatures', arguments);
-
-            var that = this;
-            var graphics = [];
-
-            function makeMultipoint() {
-                var multiPoint = new Multipoint(that.map.spatialReference);
-                array.forEach(features, function (f) {
-                    // add to mulipoint
-                    multiPoint.addPoint(f.geometry);
-
-                    // set symbol
-                    f.setSymbol(that.symbolPoint);
-
-                    // add to graphics layer
-                    graphics.push(f);
-                });
-                return multiPoint.getExtent();
-            }
-
-            function unionExtents() {
-                var extent;
-                array.forEach(features, function (f) {
-                    if (!extent) {
-                        extent = f.geometry.getExtent();
-                    } else {
-                        extent = extent.union(f.geometry.getExtent());
-                    }
-
-                    var sym = (f.geometry.type === 'polyline') ? that.symbolLine : that.symbolFill;
-                    f.setSymbol(sym);
-
-                    graphics.push(f);
-                });
-                return extent;
-            }
-
-            var extent = (features[0].geometry.type === 'point') ? makeMultipoint() : unionExtents();
-
-            this.map.setExtent(extent, true);
-
-            array.forEach(graphics, function (g) {
-                that.graphicsLayer.add(g);
-            });
-            this.onZoomed();
-        },
-        destroyRecursive: function () {
-            // summary:
-            //     Overridden from dijit._Widget. Removes graphics layer from map.
-            console.log('sherlock.Sherlock:detroyRecursive', arguments);
-
-            if (this.graphicsLayer) {
-                this.map.removeLayer(this.graphicsLayer);
-            }
-
-            this.inherited(arguments);
         }
     });
 });

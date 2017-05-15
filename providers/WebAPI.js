@@ -2,21 +2,23 @@ define([
     'agrc/modules/WebAPI',
 
     'dojo/_base/declare',
-    'dojo/_base/array',
 
-    'esri/graphic',
+    'esri/geometry/Polygon',
+    'esri/Graphic',
 
     'sherlock/providers/_ProviderMixin'
 ], function (
     WebAPI,
 
     declare,
-    array,
 
+    Polygon,
     Graphic,
 
     _ProviderMixin
 ) {
+    var defaultWkid = 3857;
+
     return declare([_ProviderMixin], {
         /**
          * @property {string} searchLayer - See constructor parameter
@@ -58,9 +60,11 @@ define([
             this.searchLayer = searchLayer;
             this.searchField = searchField;
             if (options) {
-                this.wkid = options.wkid;
+                this.wkid = options.wkid || defaultWkid;
                 this.contextField = options.contextField;
                 this.outFields = this._getOutFields(options.outFields, this.searchField, this.contextField);
+            } else {
+                this.wkid = defaultWkid;
             }
             this.outFields = this._getOutFields(null, this.searchField, this.contextField);
             this._webApi = new WebAPI({
@@ -95,8 +99,11 @@ define([
                 predicate: this._getFeatureClause(searchValue, contextValue),
                 spatialReference: this.wkid
             }).then(function handleFeatureQuery(features) {
-                return array.map(features, function convertGeometryToGraphic(geometry) {
-                    return new Graphic(geometry);
+                return features.map(function convertToGraphic(feature) {
+                    return new Graphic({
+                        geometry: new Polygon(feature.geometry),
+                        attributes: feature.attributes
+                    });
                 });
             });
 

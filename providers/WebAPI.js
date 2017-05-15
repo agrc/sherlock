@@ -3,7 +3,9 @@ define([
 
     'dojo/_base/declare',
 
+    'esri/geometry/Point',
     'esri/geometry/Polygon',
+    'esri/geometry/Polyline',
     'esri/Graphic',
 
     'sherlock/providers/_ProviderMixin'
@@ -12,12 +14,19 @@ define([
 
     declare,
 
+    Point,
     Polygon,
+    Polyline,
     Graphic,
 
     _ProviderMixin
 ) {
     var defaultWkid = 3857;
+    var geometryClasses = {
+        point: Point,
+        polygon: Polygon,
+        polyline: Polyline
+    };
 
     return declare([_ProviderMixin], {
         /**
@@ -101,7 +110,7 @@ define([
             }).then(function handleFeatureQuery(features) {
                 return features.map(function convertToGraphic(feature) {
                     return new Graphic({
-                        geometry: new Polygon(feature.geometry),
+                        geometry: new geometryClasses[feature.geometry.type](feature.geometry),
                         attributes: feature.attributes
                     });
                 });

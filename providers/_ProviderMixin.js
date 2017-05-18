@@ -22,7 +22,7 @@ define([
         _getOutFields: function (outFields, searchField, contextField) {
             console.log('sherlock/providers/_ProviderMixin:_getOutFields', arguments);
 
-            var outFields = outFields || [];
+            outFields = outFields || [];
 
             // don't mess with '*'
             if (outFields[0] === '*') {

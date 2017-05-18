@@ -1,4 +1,4 @@
-/*eslint-disable no-unused-vars, no-undef */
+/* eslint-disable no-undef, no-implicit-globals */
 profile = {
     resourceTags: {
         amd: function (filename, mid) {
@@ -8,8 +8,11 @@ profile = {
             return (/^sherlock\/resources\//.test(mid) && !/\.css$/.test(filename));
         },
         miniExclude: function (filename, mid) {
-            return (/bower_components/.test(mid) || /node_modules/.test(mid) || /GruntFile.js/.test(filename) || /tests/.test(mid));
+            return (/bower_components/.test(mid) ||
+                /node_modules/.test(mid) ||
+                /GruntFile.js/.test(filename) ||
+                /tests/.test(mid)
+            );
         }
     }
 };
-/*eslint-enable no-unused-vars, no-undef */

@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 require([
     'dojo/dom-construct',
 
@@ -26,17 +27,17 @@ require([
             geometry: new Point({
                 x: -12403622.5754,
                 y: 4566845.492200002,
-                spatialReference: {wkid: 3857}
+                spatialReference: { wkid: 3857 }
             })
         });
-        var destroy = function (widget) {
-            widget.destroyRecursive();
-            widget = null;
+        var destroy = function (destroyWidget) {
+            destroyWidget.destroyRecursive();
+            destroyWidget = null;
         };
 
         beforeEach(function (done) {
             mapView = new MapView({
-                map: new Map({basemap: 'streets'}),
+                map: new Map({ basemap: 'streets' }),
                 container: domConstruct.create('div', null, document.body)
             });
 

@@ -13,6 +13,8 @@ define([
 
     _ProviderMixin
 ) {
+    var defaultWkid = 3857;
+
     return declare([_ProviderMixin], {
         /**
          * @property {string} searchField - The Field name that is to be searched.
@@ -60,15 +62,15 @@ define([
                 outFields = options.outFields;
                 // add token for secured services
                 if (options.token) {
-                    url += '/?token=' + this.token ;
+                    url += '/?token=' + this.token;
                 }
             }
 
             this._query = new Query();
             this._query.returnGeometry = false;
             this._query.outFields = this._getOutFields(outFields, this.contextField, this.searchField);
-            var wkid = options.wkid || 3857;
-            this._query.outSpatialReference = {wkid: wkid};
+            var wkid = options.wkid || defaultWkid;
+            this._query.outSpatialReference = { wkid: wkid };
 
             this._queryTask = new QueryTask(url);
         },

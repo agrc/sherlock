@@ -197,6 +197,7 @@ define([
             this.mapView.then(afterMapLoaded);
 
             // set up new symbols, if needed
+            /* eslint-disable no-magic-numbers */
             if (!this.symbolFill) {
                 this.symbolFill = new SimpleFillSymbol({
                     style: 'none',
@@ -221,6 +222,7 @@ define([
                     size: 10
                 });
             }
+            /* eslint-enable no-magic-number */
         },
         _wireEvents: function () {
             // summary:
@@ -312,6 +314,7 @@ define([
             // exit if there are no matches in table
             if (this.matchesList.children.length < 2) {
                 this._startSearchTimer();
+
                 return;
             }
 
@@ -343,6 +346,7 @@ define([
             // return if not enough characters
             if (searchString.length < 1) {
                 this._deleteAllTableRows(this.matchesTable);
+
                 return;
             }
 
@@ -417,11 +421,10 @@ define([
             var list = [];
             array.forEach(features, function (f) {
                 if (array.some(list, function (existingF) {
-                    if (existingF.attributes[this.provider.searchField]
-                        === f.attributes[this.provider.searchField]) {
+                    if (existingF.attributes[this.provider.searchField] === f.attributes[this.provider.searchField]) {
                         if (this.provider.contextField) {
-                            if (existingF.attributes[this.provider.contextField]
-                                === f.attributes[this.provider.contextField]) {
+                            if (existingF.attributes[this.provider.contextField] ===
+                                f.attributes[this.provider.contextField]) {
                                 return true;
                             }
                         } else {
@@ -449,28 +452,28 @@ define([
             array.forEach(features, function (feat) {
                 // insert new empty row
                 var row = domConstruct.create('li', {
-                    'class': 'match'
+                    class: 'match'
                 }, this.msg, 'before');
 
                 // get match value string and
                 // bold the matching letters
                 var fString = feat.attributes[this.provider.searchField];
                 var sliceIndex = this.textBox.value.length;
-                if (!this.provider.contextField) {
-                    row.innerHTML = fString.slice(0, sliceIndex) + fString.slice(sliceIndex).bold();
-                } else {
+                if (this.provider.contextField) {
                     // add context field values
                     var matchDiv = domConstruct.create('div', {
-                        'class': 'first-cell'
+                        class: 'first-cell'
                     }, row);
                     matchDiv.innerHTML = fString.slice(0, sliceIndex) + fString.slice(sliceIndex).bold();
                     var cntyDiv = domConstruct.create('div', {
-                        'class': 'cnty-cell'
+                        class: 'cnty-cell'
                     }, row);
                     cntyDiv.innerHTML = feat.attributes[this.provider.contextField] || '';
                     domConstruct.create('div', {
                         style: 'clear: both;'
                     }, row);
+                } else {
+                    row.innerHTML = fString.slice(0, sliceIndex) + fString.slice(sliceIndex).bold();
                 }
 
                 // wire onclick event
@@ -516,12 +519,12 @@ define([
 
             // set textbox to full value
             var contextValue;
-            if (!this.provider.contextField) {
-                this.textBox.value = row.textContent;
-            } else {
+            if (this.provider.contextField) {
                 // dig deeper when context values are present
                 this.textBox.value = row.children[0].textContent;
                 contextValue = row.children[1].innerHTML;
+            } else {
+                this.textBox.value = row.textContent;
             }
 
             // execute query / canceling any previous query
@@ -672,14 +675,14 @@ define([
                 if (a.attributes[searchField] === b.attributes[searchField]) {
                     if (a.attributes[contextField] < b.attributes[contextField]) {
                         return -1;
-                    } else {
-                        return 1;
                     }
+
+                    return 1;
                 } else if (a.attributes[searchField] < b.attributes[searchField]) {
                     return -1;
-                } else {
-                    return 1;
                 }
+
+                return 1;
             }
 
             // sort features

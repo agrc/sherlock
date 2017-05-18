@@ -46,7 +46,7 @@ module.exports = function (grunt) {
         testname: 'travis_' + process.env.TRAVIS_JOB_ID,
         maxRetries: 10,
         maxPollRetries: 10,
-        'public': 'public',
+        public: 'public',
         throttled: 5,
         sauceConfig: {
             'max-duration': 1800
@@ -68,7 +68,7 @@ module.exports = function (grunt) {
                 options: {
                     removeUnusedDependencies: false
                 },
-                files: [{src: jsFiles}]
+                files: [{ src: jsFiles }]
             }
         },
         bump: {

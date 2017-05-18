@@ -17,7 +17,7 @@ window.dojoConfig = {
             main: 'stub-module'
         }
     ],
-    has: {'dojo-undef-api': true}
+    has: { 'dojo-undef-api': true }
 };
 
 try {

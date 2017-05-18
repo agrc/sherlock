@@ -26,14 +26,7 @@ var browsers = [{
 module.exports = function (grunt) {
     require('load-grunt-tasks')(grunt);
 
-    var jsFiles = ['*.js', 'providers/*.js', 'tests/**/*.js'];
-    var otherFiles = [
-        'src/**/*.html',
-        'tests/**/*.html',
-        'dojoConfig.js',
-        'GruntFile.js'
-    ];
-    var stylFiles = 'resources/*.styl';
+    var jsFiles = ['_src/**/*.js', 'tests/_spec/*.js', 'dojoConfig.js', 'GruntFile.js'];
     var bumpFiles = [
         'package.json',
         'bower.json'
@@ -62,13 +55,32 @@ module.exports = function (grunt) {
         // swallow for build server
     }
     grunt.initConfig({
-        pkg: grunt.file.readJSON('package.json'),
         amdcheck: {
             main: {
                 options: {
                     removeUnusedDependencies: false
                 },
                 files: [{ src: jsFiles }]
+            }
+        },
+        babel: {
+            options: {
+                sourceMap: true,
+                presets: ['latest'],
+                plugins: ['transform-remove-strict-mode']
+            },
+            src: {
+                files: [{
+                    expand: true,
+                    cwd: '_src',
+                    src: ['**/*.js'],
+                    dest: './'
+                }, {
+                    expand: true,
+                    cwd: 'tests/_spec',
+                    src: ['*.js'],
+                    dest: 'tests/spec'
+                }]
             }
         },
         bump: {
@@ -130,9 +142,9 @@ module.exports = function (grunt) {
                 },
                 files: [{
                     expand: true,
-                    cwd: './',
-                    src: stylFiles,
-                    dest: './',
+                    cwd: '_src/resources',
+                    src: ['*.styl'],
+                    dest: 'resources',
                     ext: '.css'
                 }]
             }
@@ -142,33 +154,46 @@ module.exports = function (grunt) {
                 livereload: true
             },
             src: {
-                files: jsFiles.concat(otherFiles).concat(stylFiles),
-                tasks: ['amdcheck', 'eslint', 'jasmine:main:build', 'stylus']
+                files: [
+                    'Gruntfile.js',
+                    '_src/**/*.*',
+                    'resources/**/*.*',
+                    'tests/**/*.*',
+                    '!tests/spec/**/*.*'
+                ],
+                tasks: [
+                    'jasmine:main:build',
+                    'stylus',
+                    'babel',
+                    'amdcheck',
+                    'eslint'
+                ]
             }
         }
     });
 
     grunt.registerTask('default', [
+        'stylus',
+        'babel',
+        'connect:jasmine',
         'jasmine:main:build',
         'eslint',
         'amdcheck',
-        'connect:jasmine',
-        'stylus',
         'watch'
     ]);
 
     grunt.registerTask('launch', [
+        'stylus',
+        'babel',
+        'connect:open',
         'jasmine:main:build',
         'eslint',
         'amdcheck',
-        'eslint',
-        'amdcheck',
-        'connect:open',
-        'stylus',
         'watch'
     ]);
 
     grunt.registerTask('travis', [
+        'babel',
         'eslint:main',
         'connect:jasmine',
         'jasmine:main:build',

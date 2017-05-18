@@ -1,8 +1,6 @@
-_SpecRunner.html
 .DS_Store
 .grunt/
 bower_components/
-doc/assets/
-doc/index.html
 node_modules/
 secrets.json
+tests/spec/

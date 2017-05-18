@@ -1,5 +1,25 @@
 /* eslint-disable no-underscore-dangle */
-require(['dojo/dom-construct', 'esri/core/watchUtils', 'esri/geometry/Point', 'esri/Graphic', 'esri/Map', 'esri/views/MapView', 'sherlock/Sherlock'], function (domConstruct, watchUtils, Point, Graphic, Map, MapView, WidgetUnderTest) {
+require([
+    'dojo/dom-construct',
+
+    'esri/core/watchUtils',
+    'esri/geometry/Point',
+    'esri/Graphic',
+    'esri/Map',
+    'esri/views/MapView',
+
+    'sherlock/Sherlock'
+], function (
+    domConstruct,
+
+    watchUtils,
+    Point,
+    Graphic,
+    Map,
+    MapView,
+
+    WidgetUnderTest
+) {
     describe('sherlock/Sherlock', function () {
         var widget;
         var mapView;
@@ -10,7 +30,7 @@ require(['dojo/dom-construct', 'esri/core/watchUtils', 'esri/geometry/Point', 'e
                 spatialReference: { wkid: 3857 }
             })
         });
-        var destroy = function destroy(destroyWidget) {
+        var destroy = function (destroyWidget) {
             destroyWidget.destroyRecursive();
             destroyWidget = null;
         };
@@ -89,4 +109,3 @@ require(['dojo/dom-construct', 'esri/core/watchUtils', 'esri/geometry/Point', 'e
         });
     });
 });
-//# sourceMappingURL=SpecSherlock.js.map

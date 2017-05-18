@@ -1,4 +1,18 @@
-define(['dojo/_base/declare', 'esri/tasks/QueryTask', 'esri/tasks/support/Query', 'sherlock/providers/_ProviderMixin'], function (declare, QueryTask, Query, _ProviderMixin) {
+define([
+    'dojo/_base/declare',
+
+    'esri/tasks/QueryTask',
+    'esri/tasks/support/Query',
+
+    'sherlock/providers/_ProviderMixin'
+], function (
+    declare,
+
+    QueryTask,
+    Query,
+
+    _ProviderMixin
+) {
     var defaultWkid = 3857;
 
     return declare([_ProviderMixin], {
@@ -38,7 +52,7 @@ define(['dojo/_base/declare', 'esri/tasks/QueryTask', 'esri/tasks/support/Query'
          * @param {string} [options.token] - Token for working with secured services
          * @param {number} [options.wkid] - WKID for spatial reference. Defaults to 3857.
          */
-        constructor: function constructor(url, searchField, options) {
+        constructor: function (url, searchField, options) {
             console.log('sherlock.providers.MapService:constructor', arguments);
 
             this.searchField = searchField;
@@ -65,17 +79,20 @@ define(['dojo/_base/declare', 'esri/tasks/QueryTask', 'esri/tasks/support/Query'
          * @param {string} searchString - The text to search for
          * @returns {Deferred}
          */
-        search: function search(searchString) {
+        search: function (searchString) {
             console.log('sherlock.providers.MapService:search', arguments);
 
             this._query.returnGeometry = false;
             this._query.where = this._getSearchClause(searchString);
 
-            this._deferred = this._queryTask.execute(this._query).then(function handleQueryTaskResponse(featureSet) {
-                return featureSet.features;
-            }, function handleQueryTaskError(er) {
-                this.emit('error', er);
-            }.bind(this));
+            this._deferred = this._queryTask.execute(this._query).then(
+                function handleQueryTaskResponse(featureSet) {
+                    return featureSet.features;
+                },
+                function handleQueryTaskError(er) {
+                    this.emit('error', er);
+                }.bind(this)
+            );
 
             return this._deferred;
         },
@@ -85,7 +102,7 @@ define(['dojo/_base/declare', 'esri/tasks/QueryTask', 'esri/tasks/support/Query'
          * @param {string} [contextValue] - The value of the data in the context field of the feature that you want
          * @returns {Promise} - A promise that resolves with a list of matching features
          */
-        getFeature: function getFeature(searchValue, contextValue) {
+        getFeature: function (searchValue, contextValue) {
             console.log('sherlock.providers.MapService:getFeature', arguments);
 
             this._query.returnGeometry = true;
@@ -99,4 +116,3 @@ define(['dojo/_base/declare', 'esri/tasks/QueryTask', 'esri/tasks/support/Query'
         }
     });
 });
-//# sourceMappingURL=MapService.js.map

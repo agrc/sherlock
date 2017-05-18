@@ -1,4 +1,26 @@
-define(['agrc/modules/WebAPI', 'dojo/_base/declare', 'esri/geometry/Point', 'esri/geometry/Polygon', 'esri/geometry/Polyline', 'esri/Graphic', 'sherlock/providers/_ProviderMixin'], function (WebAPI, declare, Point, Polygon, Polyline, Graphic, _ProviderMixin) {
+define([
+    'agrc/modules/WebAPI',
+
+    'dojo/_base/declare',
+
+    'esri/geometry/Point',
+    'esri/geometry/Polygon',
+    'esri/geometry/Polyline',
+    'esri/Graphic',
+
+    'sherlock/providers/_ProviderMixin'
+], function (
+    WebAPI,
+
+    declare,
+
+    Point,
+    Polygon,
+    Polyline,
+    Graphic,
+
+    _ProviderMixin
+) {
     var defaultWkid = 3857;
     var geometryClasses = {
         point: Point,
@@ -41,7 +63,7 @@ define(['agrc/modules/WebAPI', 'dojo/_base/declare', 'esri/geometry/Point', 'esr
          * give context to the results in case of duplicate results.
          * @param {number} [options.wkid=3857] - The well known id of the spatial reference that you are working in.
          */
-        constructor: function constructor(apiKey, searchLayer, searchField, options) {
+        constructor: function (apiKey, searchLayer, searchField, options) {
             console.log('sherlock.providers.WebAPI:constructor', arguments);
 
             this.searchLayer = searchLayer;
@@ -63,7 +85,7 @@ define(['agrc/modules/WebAPI', 'dojo/_base/declare', 'esri/geometry/Point', 'esr
          * @param {string} searchString - The text to search for
          * @returns {Promise} - A promise that resolves with a list of matching features
          */
-        search: function search(searchString) {
+        search: function (searchString) {
             console.log('sherlock.providers.WebAPI:search', arguments);
 
             this._deferred = this._webApi.search(this.searchLayer, this.outFields, {
@@ -79,7 +101,7 @@ define(['agrc/modules/WebAPI', 'dojo/_base/declare', 'esri/geometry/Point', 'esr
          * @param {string} [contextValue] - The value of the data in the context field of the feature that you want
          * @returns {Promise} - A promise that resolves with a list of matching features
          */
-        getFeature: function getFeature(searchValue, contextValue) {
+        getFeature: function (searchValue, contextValue) {
             console.log('sherlock.providers.WebAPI:getFeature', arguments);
 
             this._deferred = this._webApi.search(this.searchLayer, this.outFields.concat('shape@'), {
@@ -98,4 +120,3 @@ define(['agrc/modules/WebAPI', 'dojo/_base/declare', 'esri/geometry/Point', 'esr
         }
     });
 });
-//# sourceMappingURL=WebAPI.js.map

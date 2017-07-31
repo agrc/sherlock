@@ -11,7 +11,8 @@ profile = {
             return (/bower_components/.test(mid) ||
                 /node_modules/.test(mid) ||
                 /GruntFile.js/.test(filename) ||
-                /tests/.test(mid)
+                /tests/.test(mid) ||
+                /_src/.test(mid)
             );
         }
     }

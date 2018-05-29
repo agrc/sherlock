@@ -36,5 +36,8 @@
     "grunt-newer": "^1.1.1",
     "grunt-saucelabs": "^9.0.0",
     "load-grunt-tasks": "^3.3.0"
+  },
+  "dependencies": {
+    "spin.js": "2.3.2"
   }
 }

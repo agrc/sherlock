@@ -1,28 +1,3 @@
-var osx = 'OS X 10.10';
-var windows = 'Windows 8.1';
-var browsers = [{
-    browserName: 'safari',
-    platform: osx
-}, {
-    browserName: 'firefox',
-    platform: windows
-}, {
-    browserName: 'chrome',
-    platform: windows
-}, {
-    browserName: 'internet explorer',
-    platform: windows,
-    version: '11'
-}, {
-    browserName: 'internet explorer',
-    platform: 'Windows 8',
-    version: '10'
-}, {
-    browserName: 'internet explorer',
-    platform: 'Windows 7',
-    version: '9'
-}];
-
 module.exports = function (grunt) {
     require('load-grunt-tasks')(grunt);
 
@@ -31,29 +6,6 @@ module.exports = function (grunt) {
         'package.json',
         'bower.json'
     ];
-    var sauceConfig = {
-        urls: ['http://127.0.0.1:8000/_SpecRunner.html'],
-        tunnelTimeout: 120,
-        build: process.env.TRAVIS_JOB_ID,
-        browsers: browsers,
-        testname: 'travis_' + process.env.TRAVIS_JOB_ID,
-        maxRetries: 10,
-        maxPollRetries: 10,
-        public: 'public',
-        throttled: 5,
-        sauceConfig: {
-            'max-duration': 1800
-        },
-        statusCheckAttempts: 500
-    };
-    try {
-        var secrets = grunt.file.readJSON('secrets.json');
-        sauceConfig.username = secrets.sauce_name;
-        sauceConfig.key = secrets.sauce_key;
-        sauceConfig.testname = 'local';
-    } catch (e) {
-        // swallow for build server
-    }
     grunt.initConfig({
         amdcheck: {
             main: {
@@ -123,16 +75,10 @@ module.exports = function (grunt) {
                         'bower_components/jasmine-jsreporter/jasmine-jsreporter.js',
                         'tests/dojoConfig.js',
                         'bower_components/dojo/dojo.js',
-                        'tests/jasmineAMDErrorChecking.js',
-                        'tests/jsReporterSanitizer.js'
+                        'tests/jasmineAMDErrorChecking.js'
                     ],
                     host: 'http://localhost:8000'
                 }
-            }
-        },
-        'saucelabs-jasmine': {
-            all: {
-                options: sauceConfig
             }
         },
         stylus: {
@@ -196,7 +142,6 @@ module.exports = function (grunt) {
         'babel',
         'eslint:main',
         'connect:jasmine',
-        'jasmine:main:build',
-        'saucelabs-jasmine'
+        'jasmine'
     ]);
 };

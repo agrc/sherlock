@@ -42,4 +42,7 @@ window.dojoConfig = {
     has: { 'dojo-undef-api': true }
 };
 
-jasmine.getEnv().addReporter(new JasmineFaviconReporter());
+
+if (window.jasmine) {
+    jasmine.getEnv().addReporter(new JasmineFaviconReporter());
+}

@@ -1,5 +1,5 @@
 {
-  "name": "sherlock",
+  "name": "@agrc/sherlock",
   "version": "1.1.1",
   "description": "Search for map features",
   "repository": {
@@ -9,6 +9,7 @@
   "main": "./main",
   "dojoBuild": "sherlock.profile.js",
   "scripts": {
+    "prepare": "napa simsalabim/jasmine-favicon-reporter",
     "test": "grunt travis --verbose"
   },
   "keywords": [
@@ -20,16 +21,27 @@
   "author": "stdavis",
   "license": "MIT",
   "devDependencies": {
-    "grunt": "^1.0.1",
+    "babel-plugin-transform-remove-strict-mode": "^0.0.2",
+    "babel-preset-env": "1.7.0",
+    "eslint-config-agrc": "^1.1.0",
+    "eslint-plugin-html": "4.0.3",
+    "grunt": "1.0.3",
     "grunt-amdcheck": "^1.3.1",
+    "grunt-babel": "^6.0.0",
     "grunt-bump": "^0.8.0",
     "grunt-contrib-connect": "^1.0.2",
-    "grunt-contrib-jasmine": "^1.0.0",
+    "grunt-contrib-jasmine": "2.0.1",
     "grunt-contrib-stylus": "^1.0.0",
     "grunt-contrib-watch": "^1.0.0",
-    "grunt-eslint": "^19.0.0",
+    "grunt-eslint": "20.1.0",
     "grunt-newer": "^1.1.1",
-    "grunt-saucelabs": "^9.0.0",
-    "load-grunt-tasks": "^3.3.0"
+    "load-grunt-tasks": "4.0.0",
+    "napa": "3.0.0"
+  },
+  "dependencies": {
+    "@agrc/helpers": "1.0.0",
+    "arcgis-js-api": "4.7.2",
+    "bootstrap": "3.3.6",
+    "spin.js": "2.3.2"
   }
 }

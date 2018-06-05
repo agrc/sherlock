@@ -1,16 +1,24 @@
 language: node_js
 node_js:
-  - '6'
+    - lts/*
 before_install:
-  - npm install -g grunt-cli
-  - npm install -g bower
-  - npm install -g npm
-  - bower install
-  - npm update
-  - bower update
+    - npm install -g npm
+    - npm install -g grunt-cli
 notifications:
-  email:
-    on_success: change
-    on_failure: change
-sudo: false
-cache: yarn
+    email:
+        on_success: change
+        on_failure: change
+sudo: required
+cache:
+    directories:
+        - node_modules
+addons:
+    chrome: stable
+deploy:
+    provider: npm
+    email: stdavis@utah.gov
+    api_key:
+        secure: pSagjI4ayWlYyFor3cjqRpV9K7gWIJRKTS3c5lA2kMFE+wNxGG13zc5yI4ZQCt2JAI7TgmJaQDk6FaToTKSwlZhoAGiRzRY2aYTI1cZ/vGfIwRe81gH1WODBSN0IoUv4Uquka7WuNfMvANSyIoZW9ts3PnUXQWy1HYGS8y2qTl+gtecQnk4Yk67AOAYEV0UJG565quJ5XV9ivqsU9bDAySkOIKZWnd6asYh6CBLm6qa4AtFjODjx5gNOSDcVkMjiCEyal/nCQqkKNlcr6CFNAd9TjK6Kf2Bp/lellqqVN1iE6yXvzZXnD7e0j4wJ+EMrMN1Wk3wJaiVyU6tONZ/2jTVLpfvh5Am0VRdXfoooP5gsvD9vZPuhNubpB2+rI+4VAGUrc0xOi/8nQb0/TK7co8s90Q1Z1JOH1XtlmLKsUs45bQTI2/viDERp0gQto3Ot0KKkzQfyJYKS5OPc5FGm/6fHjF2k/LyDad6GHrEmIvl5w330tN66Bld8FVlphwbMPK03i95Xbnu96IhiA4g4iMDaiA3IYvs6YgaWQFHKHQJcVtchbHdZpUfR/DXOkqcuno+F9j4L+cPiBKX8NmpEN+zaDzWs7myO5i9Jp8oQPcNQ7ItPxeeeWRn+/5hwUpcsd9Q5syFByd7ZO5ADF3cAhw4MMtZRBzm/bCrRmSUOVt0=
+    on:
+        tags: true
+        repo: agrc-widgets/sherlock

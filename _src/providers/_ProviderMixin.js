@@ -1,4 +1,10 @@
-define(['dojo/Evented', 'dojo/_base/declare'], function (Evented, declare) {
+define([
+    'dojo/Evented',
+    'dojo/_base/declare'
+], function (
+    Evented,
+    declare
+) {
     return declare([Evented], {
         /**
          * @property {Deferred} _deferred - The deferred returned from the search for the provider
@@ -13,7 +19,7 @@ define(['dojo/Evented', 'dojo/_base/declare'], function (Evented, declare) {
          * @param {string} searchField
          * @param {string} contextField
          */
-        _getOutFields: function _getOutFields(outFields, searchField, contextField) {
+        _getOutFields: function (outFields, searchField, contextField) {
             console.log('sherlock/providers/_ProviderMixin:_getOutFields', arguments);
 
             outFields = outFields || [];
@@ -23,7 +29,7 @@ define(['dojo/Evented', 'dojo/_base/declare'], function (Evented, declare) {
                 return outFields;
             }
 
-            var addField = function addField(fld) {
+            var addField = function (fld) {
                 if (fld && outFields.indexOf(fld) === -1) {
                     outFields.push(fld);
                 }
@@ -38,7 +44,7 @@ define(['dojo/Evented', 'dojo/_base/declare'], function (Evented, declare) {
          * @private
          * @param {string} text - The text to search on
          */
-        _getSearchClause: function _getSearchClause(text) {
+        _getSearchClause: function (text) {
             console.log('sherlock.providers._ProviderMixin:_getSearchClause', arguments);
 
             return 'UPPER(' + this.searchField + ') LIKE UPPER(\'' + text + '%\')';
@@ -49,7 +55,7 @@ define(['dojo/Evented', 'dojo/_base/declare'], function (Evented, declare) {
          * @param {string} searchValue
          * @param {string} [contextValue]
          */
-        _getFeatureClause: function _getFeatureClause(searchValue, contextValue) {
+        _getFeatureClause: function (searchValue, contextValue) {
             var statement = this.searchField + ' = \'' + searchValue + '\'';
             if (this.contextField) {
                 if (contextValue && contextValue.length > 0) {
@@ -64,7 +70,7 @@ define(['dojo/Evented', 'dojo/_base/declare'], function (Evented, declare) {
         /**
          * Cancel any pending search requests
          */
-        cancelPendingRequests: function cancelPendingRequests() {
+        cancelPendingRequests: function () {
             console.log('sherlock.providers._ProviderMixin:cancelPendingRequests', arguments);
 
             if (this._deferred) {
@@ -73,4 +79,3 @@ define(['dojo/Evented', 'dojo/_base/declare'], function (Evented, declare) {
         }
     });
 });
-//# sourceMappingURL=_ProviderMixin.js.map

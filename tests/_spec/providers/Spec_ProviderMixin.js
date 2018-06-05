@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 require([
     'sherlock/providers/_ProviderMixin'
 ], function (
@@ -43,11 +44,11 @@ require([
                 expect(result).toBe('FN = \'V\'');
 
                 testObject.contextField = 'CF';
-                var result = testObject._getFeatureClause('V', 'CV');
+                result = testObject._getFeatureClause('V', 'CV');
 
                 expect(result).toBe('FN = \'V\' AND CF = \'CV\'');
 
-                var result = testObject._getFeatureClause('V', null);
+                result = testObject._getFeatureClause('V', null);
 
                 expect(result).toBe('FN = \'V\' AND CF IS NULL');
             });

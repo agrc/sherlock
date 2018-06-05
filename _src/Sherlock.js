@@ -1,4 +1,48 @@
-define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/dom-construct', 'dojo/dom-geometry', 'dojo/dom-style', 'dojo/keys', 'dojo/mouse', 'dojo/on', 'dojo/query', 'dojo/text!./templates/Sherlock.html', 'dojo/_base/array', 'dojo/_base/declare', 'esri/core/watchUtils', 'esri/symbols/SimpleFillSymbol', 'esri/symbols/SimpleLineSymbol', 'esri/symbols/SimpleMarkerSymbol', 'spinjs/spin'], function (_TemplatedMixin, _WidgetBase, domClass, domConstruct, domGeom, domStyle, keys, mouse, on, query, template, array, declare, watchUtils, SimpleFillSymbol, SimpleLineSymbol, SimpleMarkerSymbol, Spinner) {
+define([
+    'dijit/_TemplatedMixin',
+    'dijit/_WidgetBase',
+
+    'dojo/dom-class',
+    'dojo/dom-construct',
+    'dojo/dom-geometry',
+    'dojo/dom-style',
+    'dojo/keys',
+    'dojo/mouse',
+    'dojo/on',
+    'dojo/query',
+    'dojo/text!./templates/Sherlock.html',
+    'dojo/_base/array',
+    'dojo/_base/declare',
+
+    'esri/core/watchUtils',
+    'esri/symbols/SimpleFillSymbol',
+    'esri/symbols/SimpleLineSymbol',
+    'esri/symbols/SimpleMarkerSymbol',
+
+    'spinjs/spin'
+], function (
+    _TemplatedMixin,
+    _WidgetBase,
+
+    domClass,
+    domConstruct,
+    domGeom,
+    domStyle,
+    keys,
+    mouse,
+    on,
+    query,
+    template,
+    array,
+    declare,
+
+    watchUtils,
+    SimpleFillSymbol,
+    SimpleLineSymbol,
+    SimpleMarkerSymbol,
+
+    Spinner
+) {
     return declare([_WidgetBase, _TemplatedMixin], {
         templateString: template,
 
@@ -26,6 +70,7 @@ define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/do
         // _currentIndex: Integer
         //      The index of the currently selected item in the results.
         _currentIndex: 0,
+
 
         // Parameters to constructor
 
@@ -82,7 +127,7 @@ define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/do
         //      When true (default) the matches table is appended to the body element to allow it to overlap all others
         appendToBody: true,
 
-        postCreate: function postCreate() {
+        postCreate: function () {
             // summary:
             //      Overrides method of same name in dijit._Widget.
             // tags:
@@ -112,7 +157,7 @@ define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/do
             };
             this.spinner = new Spinner(opts);
         },
-        showSpinner: function showSpinner() {
+        showSpinner: function () {
             // summary:
             //      sets up and shows the spinner
             console.log('sherlock.Sherlock:showSpinner', arguments);
@@ -124,7 +169,7 @@ define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/do
                 this.spinner.spin(this.spinnerDiv);
             }
         },
-        hideSpinner: function hideSpinner() {
+        hideSpinner: function () {
             // summary:
             //      hides the spinner and shows the search icon again
             console.log('sherlock.Sherlock:hideSpinner', arguments);
@@ -133,18 +178,16 @@ define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/do
             this.spinner.stop();
             domStyle.set(this.searchIconSpan, 'display', 'inline');
         },
-        _setUpGraphicsLayer: function _setUpGraphicsLayer() {
-            var _this = this;
-
+        _setUpGraphicsLayer: function () {
             // summary:
             //      Sets up the graphics layer and associated symbols.
             // tags:
             //      private
             console.log('sherlock.Sherlock:_setUpGraphicsLayer', arguments);
 
-            var afterMapLoaded = function afterMapLoaded() {
-                if (!_this.graphicsLayer) {
-                    _this.graphicsLayer = _this.mapView.graphics;
+            var afterMapLoaded = () => {
+                if (!this.graphicsLayer) {
+                    this.graphicsLayer = this.mapView.graphics;
                 }
             };
 
@@ -179,43 +222,47 @@ define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/do
             }
             /* eslint-enable no-magic-number */
         },
-        _wireEvents: function _wireEvents() {
-            var _this2 = this;
-
+        _wireEvents: function () {
             // summary:
             //      Wires events.
             // tags:
             //      private
             console.log('sherlock.Sherlock:_wireEvents', arguments);
 
-            this.own(on(this.textBox, 'keyup', this._onTextBoxKeyUp.bind(this)), on(this.textBox, 'blur', function () {
-                // don't hide table if the cursor is over it
-                if (!_this2._isOverTable) {
-                    // hide table
-                    _this2._toggleTable(false);
-                }
-            }), on(this.textBox, 'focus', function () {
-                if (_this2.textBox.value.length > 0) {
-                    _this2._startSearchTimer();
-                }
-            }), on(this.matchesTable, mouse.enter, function () {
-                // set switch
-                _this2._isOverTable = true;
+            this.own(
+                on(this.textBox, 'keyup', this._onTextBoxKeyUp.bind(this)),
+                on(this.textBox, 'blur', () => {
+                    // don't hide table if the cursor is over it
+                    if (!this._isOverTable) {
+                        // hide table
+                        this._toggleTable(false);
+                    }
+                }),
+                on(this.textBox, 'focus', () => {
+                    if (this.textBox.value.length > 0) {
+                        this._startSearchTimer();
+                    }
+                }),
+                on(this.matchesTable, mouse.enter, () => {
+                    // set switch
+                    this._isOverTable = true;
 
-                // remove any rows selected using arrow keys
-                query('.highlighted-row').removeClass('highlighted-row');
+                    // remove any rows selected using arrow keys
+                    query('.highlighted-row').removeClass('highlighted-row');
 
-                // reset current selection
-                _this2._currentIndex = 0;
-            }), on(this.matchesTable, mouse.leave, function () {
-                // set switch
-                _this2._isOverTable = false;
+                    // reset current selection
+                    this._currentIndex = 0;
+                }),
+                on(this.matchesTable, mouse.leave, () => {
+                    // set switch
+                    this._isOverTable = false;
 
-                // set first row as selected
-                domClass.add(_this2.matchesList.children[0], 'highlighted-row');
-            }));
+                    // set first row as selected
+                    domClass.add(this.matchesList.children[0], 'highlighted-row');
+                })
+            );
         },
-        _onTextBoxKeyUp: function _onTextBoxKeyUp(evt) {
+        _onTextBoxKeyUp: function (evt) {
             // summary:
             //      Handles the text box onKeyUp evt.
             // tags:
@@ -238,9 +285,7 @@ define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/do
                 this._startSearchTimer();
             }
         },
-        _startSearchTimer: function _startSearchTimer() {
-            var _this3 = this;
-
+        _startSearchTimer: function () {
             // summary:
             //      Sets a timer before searching so that the search function
             //      isn't called too many times.
@@ -250,11 +295,11 @@ define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/do
             console.log('sherlock.Sherlock:_startSearchTimer', arguments);
 
             clearTimeout(this._timer);
-            this._timer = setTimeout(function () {
-                _this3._search(_this3.textBox.value);
+            this._timer = setTimeout(() => {
+                this._search(this.textBox.value);
             }, 250);
         },
-        _moveSelection: function _moveSelection(increment) {
+        _moveSelection: function (increment) {
             // summary:
             //      Moves the selected row in the results table based upon
             //      the arrow keys being pressed.
@@ -287,9 +332,7 @@ define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/do
             // add selected class using new index
             domClass.add(this.matchesList.children[this._currentIndex], 'highlighted-row');
         },
-        _search: function _search(searchString) {
-            var _this4 = this;
-
+        _search: function (searchString) {
             // summary:
             //      Initiates a search on the provider
             // searchString: String
@@ -310,24 +353,25 @@ define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/do
 
             this.provider.cancelPendingRequests();
 
-            this.provider.search(searchString).then(function (results) {
+            this.provider.search(searchString).then((results) => {
                 // clear table
-                _this4._deleteAllTableRows(_this4.matchesTable);
+                this._deleteAllTableRows(this.matchesTable);
 
-                _this4._processResults(results);
-            }, function (err) {
+                this._processResults(results);
+            },
+            (err) => {
                 // clear table
-                _this4._deleteAllTableRows(_this4.matchesTable);
+                this._deleteAllTableRows(this.matchesTable);
 
                 // swallow errors from cancels
                 if (err.message !== 'undefined') {
                     throw new Error('sherlock.Sherlock Provider Error: ' + err.message);
                 }
 
-                _this4.hideSpinner();
+                this.hideSpinner();
             });
         },
-        _processResults: function _processResults(features) {
+        _processResults: function (features) {
             // summary:
             //      Processes the features returned from the search provider
             // features: Object[]
@@ -362,7 +406,7 @@ define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/do
 
             this.hideSpinner();
         },
-        _removeDuplicateResults: function _removeDuplicateResults(features) {
+        _removeDuplicateResults: function (features) {
             // summary:
             //      Removes duplicates from the set of features.
             // features: Object[]
@@ -378,7 +422,8 @@ define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/do
                 if (array.some(list, function (existingF) {
                     if (existingF.attributes[this.provider.searchField] === f.attributes[this.provider.searchField]) {
                         if (this.provider.contextField) {
-                            if (existingF.attributes[this.provider.contextField] === f.attributes[this.provider.contextField]) {
+                            if (existingF.attributes[this.provider.contextField] ===
+                                f.attributes[this.provider.contextField]) {
                                 return true;
                             }
                         } else {
@@ -393,7 +438,7 @@ define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/do
 
             return list;
         },
-        _populateTable: function _populateTable(features) {
+        _populateTable: function (features) {
             // summary:
             //      Populates the autocomplete table.
             // features: Object[]
@@ -440,7 +485,7 @@ define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/do
             // show table
             this._toggleTable(true);
         },
-        _onRowClick: function _onRowClick(event) {
+        _onRowClick: function (event) {
             // summary:
             //      Handles when someone clicks on the a row in the autocomplete
             //      table.
@@ -452,9 +497,7 @@ define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/do
 
             this._setMatch(event.currentTarget);
         },
-        _setMatch: function _setMatch(row) {
-            var _this5 = this;
-
+        _setMatch: function (row) {
             // summary:
             //      Sets the passed in row as a match in the text box and
             //      zooms to the feature.
@@ -486,21 +529,24 @@ define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/do
             // execute query / canceling any previous query
             this.provider.cancelPendingRequests();
 
-            this.provider.getFeature(this.textBox.value, contextValue).then(function (graphics) {
-                _this5._zoom(graphics);
-            }, function (err) {
-                // clear table
-                _this5._deleteAllTableRows(_this5.matchesTable);
+            this.provider.getFeature(this.textBox.value, contextValue).then(
+                (graphics) => {
+                    this._zoom(graphics);
+                },
+                (err) => {
+                    // clear table
+                    this._deleteAllTableRows(this.matchesTable);
 
-                // swallow errors from cancels
-                if (err.message !== 'undefined') {
-                    throw new Error('sherlock.Sherlock Provider Error: ' + err.message);
+                    // swallow errors from cancels
+                    if (err.message !== 'undefined') {
+                        throw new Error('sherlock.Sherlock Provider Error: ' + err.message);
+                    }
+
+                    this.hideSpinner();
                 }
-
-                _this5.hideSpinner();
-            });
+            );
         },
-        showMessage: function showMessage(msg) {
+        showMessage: function (msg) {
             // summary:
             //      shows a messages at the top of the matches list
             // msg: String
@@ -510,16 +556,14 @@ define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/do
             domStyle.set(this.msg, 'display', 'block');
             this._toggleTable(true);
         },
-        hideMessage: function hideMessage() {
+        hideMessage: function () {
             // summary:
             //      hids the message at the top of the matches list
             console.log('sherlock.Sherlock:hideMessage', arguments);
 
             domStyle.set(this.msg, 'display', 'none');
         },
-        _zoom: function _zoom(graphics) {
-            var _this6 = this;
-
+        _zoom: function (graphics) {
             // summary:
             //      Zooms to the passed in graphic(s).
             // graphics: esri.Graphic[]
@@ -545,19 +589,19 @@ define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/do
                 // zoom to feature
                 goToPromise = this.mapView.goTo(graphics);
 
-                symbol = graphics[0].geometry.type === 'polyline' ? this.symbolLine : this.symbolFill;
+                symbol = (graphics[0].geometry.type === 'polyline') ? this.symbolLine : this.symbolFill;
             }
 
             graphics.forEach(function (graphic) {
                 graphic.symbol = symbol;
             });
 
-            goToPromise.then(function () {
-                _this6.graphicsLayer.addMany(graphics);
+            goToPromise.then(() => {
+                this.graphicsLayer.addMany(graphics);
 
-                if (!_this6.preserveGraphics) {
-                    watchUtils.once(_this6.mapView, 'extent', function () {
-                        _this6.graphicsLayer.removeAll();
+                if (!this.preserveGraphics) {
+                    watchUtils.once(this.mapView, 'extent', () => {
+                        this.graphicsLayer.removeAll();
                     });
                 }
             });
@@ -566,12 +610,12 @@ define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/do
 
             return goToPromise;
         },
-        onZoomed: function onZoomed() {
+        onZoomed: function () {
             // summary:
             //      Fires after the map has been zoomed to the graphic.
             console.log('sherlock.Sherlock:onZoomed', arguments);
         },
-        _deleteAllTableRows: function _deleteAllTableRows(table) {
+        _deleteAllTableRows: function (table) {
             // summary:
             //      Deletes all of the rows in the table.
             // table: Object
@@ -589,7 +633,7 @@ define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/do
             // reset current index
             this._currentIndex = 0;
         },
-        _toggleTable: function _toggleTable(show) {
+        _toggleTable: function (show) {
             // summary:
             //      Toggles the visibility of the autocomplete table.
             // show: Boolean
@@ -609,10 +653,10 @@ define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/do
                 });
             }
 
-            var displayValue = show ? 'block' : 'none';
+            var displayValue = (show) ? 'block' : 'none';
             domStyle.set(this.matchesTable, 'display', displayValue);
         },
-        _sortArray: function _sortArray(list) {
+        _sortArray: function (list) {
             // summary:
             //      Sorts the array by both the searchField and contextField
             //      if there is a contextField specied. If no context field is
@@ -645,4 +689,3 @@ define(['dijit/_TemplatedMixin', 'dijit/_WidgetBase', 'dojo/dom-class', 'dojo/do
         }
     });
 });
-//# sourceMappingURL=Sherlock.js.map

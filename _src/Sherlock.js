@@ -192,7 +192,7 @@ define([
             };
 
             // create new graphics layer and add to map
-            this.mapView.then(afterMapLoaded);
+            this.mapView.when(afterMapLoaded);
 
             // set up new symbols, if needed
             /* eslint-disable no-magic-numbers */

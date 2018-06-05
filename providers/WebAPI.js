@@ -1,4 +1,4 @@
-define(['agrc/modules/WebAPI', 'dojo/_base/declare', 'esri/geometry/Point', 'esri/geometry/Polygon', 'esri/geometry/Polyline', 'esri/Graphic', 'sherlock/providers/_ProviderMixin'], function (WebAPI, declare, Point, Polygon, Polyline, Graphic, _ProviderMixin) {
+define(['helpers/WebAPI', 'dojo/_base/declare', 'esri/geometry/Point', 'esri/geometry/Polygon', 'esri/geometry/Polyline', 'esri/Graphic', 'sherlock/providers/_ProviderMixin'], function (WebAPI, declare, Point, Polygon, Polyline, Graphic, _ProviderMixin) {
     var defaultWkid = 3857;
     var geometryClasses = {
         point: Point,

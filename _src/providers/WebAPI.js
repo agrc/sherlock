@@ -1,5 +1,5 @@
 define([
-    'agrc/modules/WebAPI',
+    'helpers/WebAPI',
 
     'dojo/_base/declare',
 

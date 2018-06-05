@@ -41,7 +41,7 @@ require([
                 container: domConstruct.create('div', null, document.body)
             });
 
-            mapView.then(function () {
+            mapView.when(function () {
                 widget = new WidgetUnderTest({
                     mapView: mapView
                 }, domConstruct.create('div', null, document.body));
@@ -53,8 +53,6 @@ require([
         afterEach(function (done) {
             // mapView.destroy needs some extra help...
             // https://thespatialcommunity.slack.com/archives/C0A6GD4T0/p1494006356289273
-            mapView.allLayerViews.destroy();
-            mapView.layerViewManager.empty();
             mapView.ui.empty();
             mapView.container.remove();
             setTimeout(function () {

@@ -1,5 +1,5 @@
 {
-  "name": "sherlock",
+  "name": "@agrc/sherlock",
   "version": "1.1.1",
   "description": "Search for map features",
   "repository": {

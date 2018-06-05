@@ -8,7 +8,7 @@ profile = {
             return (/^sherlock\/resources\//.test(mid) && !/\.css$/.test(filename));
         },
         miniExclude: function (filename, mid) {
-            return (/bower_components/.test(mid) ||
+            return (/node_modules/.test(mid) ||
                 /node_modules/.test(mid) ||
                 /GruntFile.js/.test(filename) ||
                 /tests/.test(mid) ||

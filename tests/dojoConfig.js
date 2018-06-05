@@ -1,15 +1,37 @@
-/* global JasmineFaviconReporter, jasmineRequire */
+/* global JasmineFaviconReporter */
 window.dojoConfig = {
-    baseUrl: '../bower_components',
+    baseUrl: '../node_modules',
     packages: [
-        'agrc',
         'dojo',
         'dijit',
         'dojox',
-        'esri',
         'moment',
-        'spinjs',
         {
+            name: 'spinjs',
+            location: 'spin.js'
+        }, {
+            name: 'esri',
+            location: 'arcgis-js-api'
+        }, {
+            name: 'maquette',
+            location: 'maquette',
+            main: 'dist/maquette.umd'
+        }, {
+            name: 'maquette-css-transitions',
+            location: 'maquette-css-transitions',
+            main: 'dist/maquette-css-transitions.umd'
+        }, {
+            name: 'maquette-jsx',
+            location: 'maquette-jsx',
+            main: 'dist/maquette-jsx.umd'
+        }, {
+            name: 'tslib',
+            location: 'tslib',
+            main: 'tslib'
+        }, {
+            name: 'helpers',
+            location: '@agrc/helpers'
+        }, {
             name: 'sherlock',
             location: '../'
         }, {
@@ -20,10 +42,4 @@ window.dojoConfig = {
     has: { 'dojo-undef-api': true }
 };
 
-try {
-    // for jasmine-favicon-reporter
-    jasmine.getEnv().addReporter(new JasmineFaviconReporter());
-    jasmine.getEnv().addReporter(new jasmineRequire.JSReporter2());
-} catch (er) {
-    // do nothing for stand-alone test page
-}
+jasmine.getEnv().addReporter(new JasmineFaviconReporter());

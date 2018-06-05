@@ -1,24 +1,24 @@
 language: node_js
 node_js:
-    - lts/*
+- lts/*
 before_install:
-    - npm install -g npm
-    - npm install -g grunt-cli
+- npm install -g npm
+- npm install -g grunt-cli
 notifications:
-    email:
-        on_success: change
-        on_failure: change
+  email:
+    on_success: change
+    on_failure: change
 sudo: required
 cache:
-    directories:
-        - node_modules
+  directories:
+  - node_modules
 addons:
-    chrome: stable
+  chrome: stable
 deploy:
-    provider: npm
-    email: stdavis@utah.gov
-    api_key:
-        secure: pSagjI4ayWlYyFor3cjqRpV9K7gWIJRKTS3c5lA2kMFE+wNxGG13zc5yI4ZQCt2JAI7TgmJaQDk6FaToTKSwlZhoAGiRzRY2aYTI1cZ/vGfIwRe81gH1WODBSN0IoUv4Uquka7WuNfMvANSyIoZW9ts3PnUXQWy1HYGS8y2qTl+gtecQnk4Yk67AOAYEV0UJG565quJ5XV9ivqsU9bDAySkOIKZWnd6asYh6CBLm6qa4AtFjODjx5gNOSDcVkMjiCEyal/nCQqkKNlcr6CFNAd9TjK6Kf2Bp/lellqqVN1iE6yXvzZXnD7e0j4wJ+EMrMN1Wk3wJaiVyU6tONZ/2jTVLpfvh5Am0VRdXfoooP5gsvD9vZPuhNubpB2+rI+4VAGUrc0xOi/8nQb0/TK7co8s90Q1Z1JOH1XtlmLKsUs45bQTI2/viDERp0gQto3Ot0KKkzQfyJYKS5OPc5FGm/6fHjF2k/LyDad6GHrEmIvl5w330tN66Bld8FVlphwbMPK03i95Xbnu96IhiA4g4iMDaiA3IYvs6YgaWQFHKHQJcVtchbHdZpUfR/DXOkqcuno+F9j4L+cPiBKX8NmpEN+zaDzWs7myO5i9Jp8oQPcNQ7ItPxeeeWRn+/5hwUpcsd9Q5syFByd7ZO5ADF3cAhw4MMtZRBzm/bCrRmSUOVt0=
-    on:
-        tags: true
-        repo: agrc-widgets/sherlock
+  provider: npm
+  email: stdavis@utah.gov
+  api_key:
+    secure: TIcII6sVGw92KAmaBgwziw4hkQyCn1JU6N+OkFt6BpuRdp9q71I72xZkl6XDUmghc45zsr/4ujOixFBZQFi16dLyZNentg67BvEBEGuYmuauSNC3Nv3sYQx0e6wPgZz3LQZg6P5lFmNoQVgcu+Fs8yvvQCh3nxuK+fVqcwvNgcDqk4k0PAHMKwJ2CV2rgApjlOFEnJ7SMukTvzJ0dtwIFylVh09YzitEglg9EmnMuPdtXED3QJB2q34IqWY7m1R4K5AnuQdEaz7/71x74TtXk29YeH0BIEswCtbhU30t4LklvQZ9k9+sP/rJEfZenMPGxQyQPJ2OC0MIGoyANYFMWNUUm/c5ERrbcxVvNv0EzFe3hTKmgjBLfaVgmsnsocjlI5e4iqejcEAab7JDN72DUdigwXWuymW0KPchezsL6/e7QHSLnhUhcpliCxqgxgtF0Tj5w+yPneSqfym0Q8CuhG/fmSNi6c0rk03AuE93r3uBoSMYa/vTF8lOKexFY/jfKaqlCdusl3PIC37oqV1g8ORKxGjNrh1ZDesFFQJHdpI3yAGKojWAkIz40vPdOdJXUIAqZ7j3c0Y2C4nAhkYxYHypM9rFBtCwR+IXrQyolSJmqLoy26VWu++gN7vKIwizRB9M4u+/XjedprI3D5ZTMA7fYx186kqFTlEqs5egQxE=
+  on:
+    tags: true
+    repo: agrc-widgets/sherlock

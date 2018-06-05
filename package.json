@@ -21,7 +21,6 @@
   "license": "MIT",
   "devDependencies": {
     "babel-plugin-transform-remove-strict-mode": "^0.0.2",
-    "babel-preset-latest": "^6.24.1",
     "eslint-config-agrc": "^1.1.0",
     "eslint-plugin-html": "^2.0.3",
     "grunt": "^1.0.1",
@@ -38,6 +37,7 @@
     "load-grunt-tasks": "^3.3.0"
   },
   "dependencies": {
+    "babel-preset-env": "1.7.0",
     "spin.js": "2.3.2"
   }
 }

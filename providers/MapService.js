@@ -1,6 +1,7 @@
 define([
     'dojo/_base/declare',
 
+    'esri/SpatialReference',
     'esri/tasks/query',
     'esri/tasks/QueryTask',
 
@@ -8,6 +9,7 @@ define([
 ], function (
     declare,
 
+    SpatialReference,
     Query,
     QueryTask,
 
@@ -48,11 +50,15 @@ define([
          * @param {string} [options.contextField] - A second field to display in the results table to
          * give context to the results in case of duplicate results.
          * @param {string} [options.token] - Token for working with secured services
+         * @param {string} [options.wkid] - Token for working with secured services
          */
         constructor: function (url, searchField, options) {
             console.log('sherlock.providers.MapService:constructor', arguments);
 
+            this._query = new Query();
+
             this.searchField = searchField;
+
             var outFields;
             if (options) {
                 this.contextField = options.contextField;
@@ -61,9 +67,11 @@ define([
                 if (options.token) {
                     url += '/?token=' + this.token ;
                 }
+                if (options.wkid) {
+                    this._query.outSpatialReference = new SpatialReference(options.wkid);
+                }
             }
 
-            this._query = new Query();
             this._query.returnGeometry = false;
             this._query.outFields = this._getOutFields(outFields, this.contextField, this.searchField)
 

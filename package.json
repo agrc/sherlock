@@ -40,7 +40,7 @@
   "dependencies": {
     "@agrc/helpers": "1.0.0",
     "arcgis-js-api": "4.7.2",
-    "bootstrap": "3.3.6",
+    "bootstrap": "3.4.1",
     "spin.js": "2.3.2"
   }
 }

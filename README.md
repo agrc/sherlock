@@ -1,3 +1,5 @@
+# NOTE: This repo has been replaced by https://github.com/agrc/kitchen-sink
+
 # Sherlock
 
 A type ahead widget for searching for items in a feature service or api endpoint and zooming an esri map to the AOI.
